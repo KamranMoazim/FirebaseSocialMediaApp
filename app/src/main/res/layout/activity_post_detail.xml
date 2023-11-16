@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    android:layout_marginBottom="8dp">
+
+
+    <ImageView
+        android:id="@+id/detail_image_single_car_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:src="@drawable/upload_icon2"
+        android:scaleType="fitXY"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        />
+
+    <TextView
+        android:id="@+id/detail_name_single_car_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Car"
+        android:textSize="25dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="225dp"
+        />
+
+    <Button
+        android:id="@+id/deletebtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete Post"
+        android:layout_below="@+id/detail_name_single_car_view"
+        android:layout_marginHorizontal="40dp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:backgroundTint="@color/white"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="30dp"
+        />
+
+
+
+</RelativeLayout>

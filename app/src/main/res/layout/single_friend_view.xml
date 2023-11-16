@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/imageText"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circular_background"
+        android:text="FL"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:layout_gravity="start" />
+
+    <TextView
+        android:id="@+id/single_friend_username_text"
+        android:text="Username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/imageText"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        android:textStyle="bold"
+        />
+
+    <ImageButton
+        android:id="@+id/message_friend_btn"
+        android:src="@drawable/ic_chat"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="@color/colorPrimary"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:text=""
+        android:gravity="center"
+        android:layout_toStartOf="@+id/remove_friend_btn"
+        />
+
+    <ImageButton
+        android:id="@+id/remove_friend_btn"
+        android:src="@drawable/ic_person_remove"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="@color/colorPrimary"
+        android:layout_alignParentEnd="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:text=""
+        android:gravity="center"
+        android:paddingLeft="5dp"
+        />
+
+
+</RelativeLayout>

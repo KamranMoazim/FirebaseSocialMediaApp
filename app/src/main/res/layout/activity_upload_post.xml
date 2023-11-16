@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UploadPostActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:src="@drawable/upload_icon2"
+        android:scaleType="fitXY"
+        android:layout_margin="40dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/imageViewAdd"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Post Title"
+        android:id="@+id/inputImageName"
+        android:layout_below="@+id/imageViewAdd"
+        android:layout_marginHorizontal="40dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewProgressBar"
+        android:layout_below="@+id/inputImageName"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="0.0%"
+        android:textSize="25dp"
+        />
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_below="@+id/textViewProgressBar"
+        android:layout_marginHorizontal="40dp"
+        android:max="100"
+        style="?android:attr/progressBarStyleHorizontal"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload"
+        android:id="@+id/btnUpload"
+        android:layout_below="@+id/textViewProgressBar"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="20dp"
+        />
+
+</RelativeLayout>
