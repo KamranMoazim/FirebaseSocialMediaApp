@@ -17,8 +17,8 @@ class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bindData(post: Post) {
         // Bind the data from the 'person' parameter to your views
         // For example:
-        nameTextView = itemView.findViewById<TextView>(R.id.name_single_post_view)
-        uriTextView = itemView.findViewById<ImageView>(R.id.image_single_post_view)
+        nameTextView = itemView.findViewById(R.id.name_single_post_view)
+        uriTextView = itemView.findViewById(R.id.image_single_post_view)
 
         nameTextView.text = post.PostName
 //        uriTextView.setImageURI(car.ImageUri)

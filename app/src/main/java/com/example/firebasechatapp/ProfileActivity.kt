@@ -11,6 +11,9 @@ class ProfileActivity : AppCompatActivity() {
 
         val bottomNavigation: BottomNavigationView = findViewById(R.id.bottom_navigation)
 
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, FriendsFragment())
+            .commit()
 
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {

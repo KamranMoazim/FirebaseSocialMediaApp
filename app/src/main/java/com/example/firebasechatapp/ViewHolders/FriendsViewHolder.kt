@@ -16,7 +16,7 @@ class FriendsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
 
     fun bindData(user: User) {
 
-        imageTextView = itemView.findViewById(R.id.imageText)
+        imageTextView = itemView.findViewById(R.id.single_friend_imageText)
         singleFriendUsernameView = itemView.findViewById(R.id.single_friend_username_text)
         // messageFriendBtn = itemView.findViewById(R.id.message_friend_btn)
         // removeFriendBtn = itemView.findViewById(R.id.remove_friend_btn)

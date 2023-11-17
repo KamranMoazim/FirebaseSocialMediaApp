@@ -144,8 +144,8 @@ class HomeActivity : AppCompatActivity() {
 //            }
 //        }
         adapter = PostRecyclerViewAdapter(options)
-        adapter.startListening()
         carRecyclerView.adapter = adapter
+        adapter.startListening()
     }
 
 
