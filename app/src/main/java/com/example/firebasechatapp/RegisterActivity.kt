@@ -14,11 +14,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var firestoreReference: CollectionReference
 
     private lateinit var editTextEmail: EditText
     private lateinit var editTextPassword: EditText
@@ -39,6 +42,7 @@ class RegisterActivity : AppCompatActivity() {
         // databaseReference = Firebase.database.getReference().child(AppConsts.USERS_CONSTANT)
         auth = FirebaseUtils.getFirebaseAuthInstance()
         databaseReference = FirebaseUtils.getDatabaseReference().child(AppConsts.USERS_CONSTANT)
+        firestoreReference = FirebaseUtils.allUsersCollectionReference()
 
         editTextEmail = findViewById(R.id.editTextEmail)
         editTextPassword = findViewById(R.id.editTextPassword)
@@ -89,19 +93,36 @@ class RegisterActivity : AppCompatActivity() {
 
                     // Save additional details to the database
                     if (uid != null) {
-                        val userRef = databaseReference.child(uid)
-                        val userData = User(UserName = username, FullName = fullName, About = about, Age = age, UserId = uid)
+//                        val userRef = databaseReference.child(uid)
+                        val userData = User(UserName = username, FullName = fullName, About = about, Age = age, UserId = uid, MyFriendsIds = listOf())
+//
+//                        userRef.setValue(userData)
+//                            .addOnCompleteListener { databaseTask ->
+//                                if (databaseTask.isSuccessful) {
+//                                    // User details saved to the database
+//                                    goToLoginActivity()
+//                                    finish()
+//                                } else {
+//                                    // Handle database error
+//                                }
+//                            }
 
-                        userRef.setValue(userData)
-                            .addOnCompleteListener { databaseTask ->
-                                if (databaseTask.isSuccessful) {
+                        firestoreReference.add(userData).addOnCompleteListener{ task ->
+                            run {
+                                if (task.isSuccessful) {
                                     // User details saved to the database
                                     goToLoginActivity()
                                     finish()
                                 } else {
                                     // Handle database error
+                                    Toast.makeText(
+                                        this,
+                                        "Registration failed: Please Try Again Later",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
+                        }
                     }
 
                     // Registration success

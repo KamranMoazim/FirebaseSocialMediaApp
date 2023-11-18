@@ -125,6 +125,7 @@ class ChatActivity : AppCompatActivity() {
 
         chatRoom!!.LastMessageTimestamp = Timestamp.now()
         chatRoom!!.LastMessageSenderId = savedCredentials.third!!.UserId
+        chatRoom!!.LastMessage = message
         FirebaseUtils.getChatRoomReference(chatroomId).set(chatRoom!!)
 
         var chatMessage = ChatMessage(message, savedCredentials.third!!.UserId, Timestamp.now())
@@ -149,6 +150,7 @@ class ChatActivity : AppCompatActivity() {
                         chatRoom = ChatRoom(
                             ChatRoomId = chatroomId,
                             LastMessageSenderId = "",
+                            LastMessage = "",
                             LastMessageTimestamp = Timestamp.now(),
                             listOf(savedCredentials.third!!.UserId, otherUser.UserId)
                         )

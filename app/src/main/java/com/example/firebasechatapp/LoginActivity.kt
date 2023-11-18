@@ -16,11 +16,14 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.CollectionReference
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var firestoreReference: CollectionReference
+
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
 
@@ -37,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
         // databaseReference = Firebase.database.getReference().child(AppConsts.USERS_CONSTANT)
         auth = FirebaseUtils.getFirebaseAuthInstance()
         databaseReference = FirebaseUtils.getDatabaseReference().child(AppConsts.USERS_CONSTANT)
+        firestoreReference = FirebaseUtils.allUsersCollectionReference()
 
         sharedPreferencesHelper = SharedPreferencesHelper(this)
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
@@ -80,7 +84,28 @@ class LoginActivity : AppCompatActivity() {
 
                     val uid = FirebaseAuth.getInstance().currentUser?.uid
 
-                    fetchUserDetails(uid) { user ->
+//                    fetchUserDetails(uid) { user ->
+//                        if (user != null) {
+//                            sharedPreferencesHelper.saveCredentials(
+//                                password = password,
+//                                email = email,
+//                                username = user.UserName,
+//                                fullname = user.FullName,
+//                                about = user.About,
+//                                age = user.Age,
+//                                userId = user.UserId
+//                            )
+//
+//                            Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+//
+//                            startHomeActivity()
+//                        } else {
+//                            // Handle the case where user details are not available
+//                            Toast.makeText(this, "Error fetching user details", Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+
+                    fetchUserDetailsUsingCollections(uid) { user ->
                         if (user != null) {
                             sharedPreferencesHelper.saveCredentials(
                                 password = password,
@@ -89,7 +114,8 @@ class LoginActivity : AppCompatActivity() {
                                 fullname = user.FullName,
                                 about = user.About,
                                 age = user.Age,
-                                userId = user.UserId
+                                userId = user.UserId,
+                                friendsIDs = user.MyFriendsIds
                             )
 
                             Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
@@ -100,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
                             Toast.makeText(this, "Error fetching user details", Toast.LENGTH_SHORT).show()
                         }
                     }
+
 
                 } else {
                     // If login fails, display a message to the user.
@@ -141,4 +168,45 @@ class LoginActivity : AppCompatActivity() {
             callback(null)
         }
     }
+
+    private fun fetchUserDetailsUsingCollections(uid: String?, callback: (User?) -> Unit) {
+        uid?.let { userId ->
+//            firestoreReference
+//                .document(userId)
+//                .get()
+//                .addOnSuccessListener { documentSnapshot ->
+//                    val user = documentSnapshot.toObject(User::class.java)
+//                    callback(user)
+//                }
+//                .addOnFailureListener { exception ->
+//                    // Handle error
+//                    callback(null)
+//                }
+            firestoreReference
+                .whereEqualTo("userId", userId)  // Replace "userId" with the actual field name in your document
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    // This block is executed if the query is successful
+
+                    if (!querySnapshot.isEmpty) {
+                        // Assuming there is only one user with the given userId (unique userId)
+
+                        val user = querySnapshot.documents[0].toObject(User::class.java)
+                        callback(user)
+                    } else {
+                        // Handle the case where no user with the specified userId is found
+                        callback(null)
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // This block is executed if there's an error during the query
+                    // Handle error
+                    callback(null)
+                }
+
+        } ?: run {
+            callback(null)
+        }
+    }
+
 }

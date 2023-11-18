@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
 tools:context=".MessagesFragment">
 
 <RelativeLayout
@@ -30,8 +30,8 @@ tools:context=".MessagesFragment">
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/my_friends_recycler_view"
-        tools:listitem="@layout/single_friend_view"
+        android:id="@+id/my_chats_recycler_view"
+        tools:listitem="@layout/single_recent_chat_view"
         android:layout_below="@+id/main_toolbar"
         android:layout_marginTop="10dp"
         android:layout_width="wrap_content"

@@ -71,12 +71,18 @@
             />
     </RelativeLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_user_recycler"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/search_user_layout"
-        android:padding="10dp"
-        />
+        android:layout_below="@+id/search_user_layout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_user_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/single_search_friend_view"
+            android:padding="10dp"
+            />
+    </ScrollView>
 
 </RelativeLayout>

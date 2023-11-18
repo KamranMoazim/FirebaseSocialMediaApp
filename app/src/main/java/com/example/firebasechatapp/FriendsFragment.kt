@@ -25,16 +25,18 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.CollectionReference
 
 class FriendsFragment : Fragment() {
 
     private lateinit var myFriendsRecyclerView : RecyclerView
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var firestoreReference: CollectionReference
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
 
-    private lateinit var options:FirebaseRecyclerOptions<User>
-    // private lateinit var adapter: FirebaseRecyclerAdapter<User, FriendsViewHolder>
+//    private lateinit var options:FirebaseRecyclerOptions<User>
+//    private lateinit var adapter: FirebaseRecyclerAdapter<User, FriendsViewHolder>
     private lateinit var adapter: FriendsRecyclerViewAdapter
     private lateinit var users : List<User>
 
@@ -54,13 +56,14 @@ class FriendsFragment : Fragment() {
         sharedPreferencesHelper = SharedPreferencesHelper(requireContext())
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
         databaseReference = FirebaseUtils.getDatabaseReference().child("Users")
+        firestoreReference = FirebaseUtils.allUsersCollectionReference()
 
 
         myFriendsRecyclerView.layoutManager = LinearLayoutManager(context)
         myFriendsRecyclerView.setHasFixedSize(false)
 
 
-        adapter = FriendsRecyclerViewAdapter()
+        adapter = FriendsRecyclerViewAdapter(requireContext())
         myFriendsRecyclerView.adapter = adapter
 
 
@@ -76,40 +79,79 @@ class FriendsFragment : Fragment() {
 
 
 
-
-    private fun loadData(data:String) {
-
-
-        var query = databaseReference
+    private fun loadData(data: String) {
         users = mutableListOf()
 
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if there is data in the snapshot
-                if (dataSnapshot.exists()) {
-                    // Data exists, log or process it
-                    for (userSnapshot in dataSnapshot.children) {
-                        val user = userSnapshot.getValue(User::class.java)
-                        // Log or process each user
-                        Log.d("UserData", "User: $user")
-                        if (user!!.UserId != savedCredentials.third!!.UserId){
-                            (users as MutableList<User>).add(user!!)
-                        }
-                    }
-                    adapter.updateUserLis(users)
-                } else {
-                    // No data found
-                    Log.d("UserData", "No users found")
-                }
-            }
+        val myFriendsIds = savedCredentials.third!!.MyFriendsIds
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle errors here
-                Log.e("UserData", "Error getting users: ${databaseError.message}")
-            }
-        })
+        if (myFriendsIds.isNotEmpty()) {
+            firestoreReference
+                .whereIn("userId", myFriendsIds)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    // Check if there is data in the snapshot
+                    if (!querySnapshot.isEmpty) {
+                        // Data exists, log or process it
+                        for (documentSnapshot in querySnapshot.documents) {
+                            val user = documentSnapshot.toObject(User::class.java)
+                            // Log or process each user
+                            Log.d("UserData", "User: $user")
+                            if (user?.UserId != savedCredentials.third?.UserId) {
+//                            users.add(user!!)
+                                (users as MutableList<User>).add(user!!)
+                            }
+                        }
+                        adapter.updateUserLis(users)
+                    } else {
+                        // No data found
+                        Log.d("UserData", "No users found")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // Handle errors here
+                    Log.e("UserData", "Error getting users: ${exception.message}")
+                }
+        } else {
+            // you have no friends
+        }
+
 
     }
+
+
+//    private fun loadData(data:String) {
+//
+//
+//        var query = databaseReference
+//        users = mutableListOf()
+//
+//        query.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                // Check if there is data in the snapshot
+//                if (dataSnapshot.exists()) {
+//                    // Data exists, log or process it
+//                    for (userSnapshot in dataSnapshot.children) {
+//                        val user = userSnapshot.getValue(User::class.java)
+//                        // Log or process each user
+//                        Log.d("UserData", "User: $user")
+//                        if (user!!.UserId != savedCredentials.third!!.UserId){
+//                            (users as MutableList<User>).add(user!!)
+//                        }
+//                    }
+//                    adapter.updateUserLis(users)
+//                } else {
+//                    // No data found
+//                    Log.d("UserData", "No users found")
+//                }
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                // Handle errors here
+//                Log.e("UserData", "Error getting users: ${databaseError.message}")
+//            }
+//        })
+//
+//    }
 
 
 }

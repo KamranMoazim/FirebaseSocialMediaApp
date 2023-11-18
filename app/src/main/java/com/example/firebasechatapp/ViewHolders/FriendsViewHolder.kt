@@ -22,7 +22,8 @@ class FriendsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)  {
         // removeFriendBtn = itemView.findViewById(R.id.remove_friend_btn)
 
         imageTextView.text = MyUtils.getInitials(user.FullName)
-        singleFriendUsernameView.text = user.UserName
+//        singleFriendUsernameView.text = user.UserName.subSequence(0, 20).toString() + "..."
+        singleFriendUsernameView.text = MyUtils.getSubString(user.UserName, 20) + "..."
 
     }
 

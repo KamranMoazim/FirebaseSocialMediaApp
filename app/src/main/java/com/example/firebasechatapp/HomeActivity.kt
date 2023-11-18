@@ -16,15 +16,20 @@ import com.example.firebasechatapp.data.Post
 import com.example.firebasechatapp.data.User
 import com.example.firebasechatapp.utils.AppConsts
 import com.example.firebasechatapp.utils.FirebaseUtils
+import com.example.firebasechatapp.utils.FriendsDatabaseHelper
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.CollectionReference
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var firestoreReference: CollectionReference
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
 
@@ -33,8 +38,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var floatingAddBtn:FloatingActionButton
     private lateinit var floatingProfileBtn:FloatingActionButton
     private lateinit var floatingLogoutBtn:FloatingActionButton
-    private lateinit var options:FirebaseRecyclerOptions<Post>
-    private lateinit var adapter:FirebaseRecyclerAdapter<Post, PostViewHolder>
+//    private lateinit var options:FirebaseRecyclerOptions<Post>
+//    private lateinit var adapter:FirebaseRecyclerAdapter<Post, PostViewHolder>
+    private lateinit var options:FirestoreRecyclerOptions<Post>
+    private lateinit var adapter: FirestoreRecyclerAdapter<Post, PostViewHolder>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +53,7 @@ class HomeActivity : AppCompatActivity() {
 
 //        databaseReference = Firebase.database.getReference().child(AppConsts.POSTS_CONSTANT).child(savedCredentials.third!!.UserId)
         databaseReference = FirebaseUtils.getPostsReferenceForUser(savedCredentials.third!!.UserId)
+        firestoreReference = FirebaseUtils.allPostsCollectionReference()
 
 
 
@@ -72,6 +80,10 @@ class HomeActivity : AppCompatActivity() {
 
         floatingLogoutBtn.setOnClickListener{
             sharedPreferencesHelper.clearCredentials()
+
+            val friendsDatabaseHelper = FriendsDatabaseHelper(this)
+            friendsDatabaseHelper.removeAllFriendsData()
+
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
@@ -113,40 +125,48 @@ class HomeActivity : AppCompatActivity() {
         loadData("")
     }
 
+    private fun loadData(data: String) {
 
-    private fun loadData(data:String) {
+        var myFriendsIds = mutableListOf<String>()
+        myFriendsIds.addAll(savedCredentials.third!!.MyFriendsIds)
+        // myFriendsIds.add(savedCredentials.third!!.UserId) // including myself, to view my posts to
 
-        var query = databaseReference.orderByChild(AppConsts.POST_Name_CONSTANT).startAt(data).endAt(data+"\uf8ff")
+        if (myFriendsIds.isNotEmpty()) {
 
-        options =
-            FirebaseRecyclerOptions.Builder<Post>().setQuery(query, Post::class.java)
+            val query = firestoreReference
+                .whereIn("AuthorId", myFriendsIds)
+                .orderBy(AppConsts.POST_Name_CONSTANT)
+                .startAt(data)
+                .endAt(data + "\uf8ff")
+
+            options = FirestoreRecyclerOptions.Builder<Post>()
+                .setQuery(query, Post::class.java)
                 .build()
 
-//        adapter = object : FirebaseRecyclerAdapter<Post, PostViewHolder>(options) {
-//            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-//                // Create and return a new MyViewHolder instance
-//                // You need to inflate your item layout here
-//                val view = LayoutInflater.from(parent.context)
-//                    .inflate(R.layout.single_post_view, parent, false)
-//                var holder = PostViewHolder(view)
-//                return holder
-//            }
-//
-//            override fun onBindViewHolder(holder: PostViewHolder, position: Int, model: Post) {
-//                // Bind the data to the MyViewHolder
-//                // Set the data from the 'model' parameter to your views in the MyViewHolder
-//                holder.itemView.setOnClickListener {
-//                    val intent = Intent(this@HomeActivity, PostDetailActivity::class.java)
-//                    intent.putExtra(AppConsts.POST_KEY_CONSTANT, getRef(position).key)
-//                    startActivity(intent)
-//                }
-//                holder.bindData(model)
-//            }
-//        }
-        adapter = PostRecyclerViewAdapter(options)
-        carRecyclerView.adapter = adapter
-        adapter.startListening()
+            adapter = PostRecyclerViewAdapter(options)
+            carRecyclerView.adapter = adapter
+            adapter.startListening()
+
+        } else {
+
+        }
+
+
     }
+
+
+//    private fun loadData(data:String) {
+//
+//        var query = databaseReference.orderByChild(AppConsts.POST_Name_CONSTANT).startAt(data).endAt(data+"\uf8ff")
+//
+//        options =
+//            FirebaseRecyclerOptions.Builder<Post>().setQuery(query, Post::class.java)
+//                .build()
+//
+//        adapter = PostRecyclerViewAdapter(options)
+//        carRecyclerView.adapter = adapter
+//        adapter.startListening()
+//    }
 
 
 }

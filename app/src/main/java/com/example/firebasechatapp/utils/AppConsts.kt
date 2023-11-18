@@ -10,5 +10,7 @@ class AppConsts {
         const val POST_Name_CONSTANT = "PostName"
         const val POST_Image_CONSTANT = "PostImage"
         const val POST_ImageUri_CONSTANT = "ImageUri"
+        const val POST_AuthorId_CONSTANT = "AuthorId"
+        const val POST_Description_CONSTANT = "PostDescription"
     }
 }

@@ -17,6 +17,7 @@ import com.example.firebasechatapp.utils.FirebaseUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.storage.OnProgressListener
 import com.google.firebase.storage.StorageReference
 
@@ -24,6 +25,7 @@ import com.google.firebase.storage.StorageReference
 class UploadPostActivity : AppCompatActivity() {
 
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var firestoreReference: CollectionReference
     private lateinit var storageReference: StorageReference
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
@@ -31,6 +33,7 @@ class UploadPostActivity : AppCompatActivity() {
     private val REQUEST_CODE_IMAGE = 101
     private lateinit var imageViewAdd:ImageView
     private lateinit var imageInputName:EditText
+    private lateinit var imageDescriptionName:EditText
     private lateinit var textViewProgress:TextView
     private lateinit var progressBar:ProgressBar
     private lateinit var btnUpload:Button
@@ -51,10 +54,12 @@ class UploadPostActivity : AppCompatActivity() {
 
         databaseReference = FirebaseUtils.getPostsReferenceForUser(savedCredentials.third!!.UserId)
         storageReference = FirebaseUtils.getStorageReference().child(AppConsts.POST_Image_CONSTANT)
+        firestoreReference = FirebaseUtils.allPostsCollectionReference()
 
 
         imageViewAdd = findViewById(R.id.imageViewAdd)
         imageInputName = findViewById(R.id.inputImageName)
+        imageDescriptionName = findViewById(R.id.inputPostDescription)
         textViewProgress = findViewById(R.id.textViewProgressBar)
         progressBar = findViewById(R.id.progressBar)
         btnUpload = findViewById(R.id.btnUpload)
@@ -74,56 +79,95 @@ class UploadPostActivity : AppCompatActivity() {
 
         btnUpload.setOnClickListener {
             val imageName = imageInputName.text.toString()
-            if (isImageAdded && imageName.isNotEmpty()){
-                uploadImage(imageName)
+            val imageDescription = imageDescriptionName.text.toString()
+
+            if (isImageAdded && imageName.isNotEmpty() && imageDescription.isNotEmpty()){
+                uploadImage(imageName, imageDescription)
             }
         }
 
     }
 
-    private fun uploadImage(imageName: String) {
+    private fun uploadImage(imageName: String, imageDescription:String) {
         textViewProgress.visibility = View.VISIBLE
         progressBar.visibility = View.VISIBLE
 
-        var key = databaseReference.push().key
+        val documentReference = firestoreReference.document() // Create a new document reference
 
-//        Log.d("UploadCarActivity", "uploadImage: KEY=$key")
+        storageReference.child(documentReference.id + ".jpg").putFile(imageUri)
+            .addOnSuccessListener { uploadTask ->
+                storageReference.child(documentReference.id + ".jpg").downloadUrl
+                    .addOnSuccessListener { uri ->
+                        val postData = hashMapOf(
+                            AppConsts.POST_Name_CONSTANT to imageName,
+                            AppConsts.POST_ImageUri_CONSTANT to uri.toString(),
+                            AppConsts.POST_AuthorId_CONSTANT to savedCredentials.third!!.UserId,
+                            AppConsts.POST_Description_CONSTANT to imageDescription
+                        )
 
-        if (key != null) {
-            storageReference.child(key + ".jpg").putFile(imageUri)
-                .addOnSuccessListener {
+                        documentReference.set(postData)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Data Saved Successfully", Toast.LENGTH_LONG).show()
 
-//                    Log.d("UploadCarActivity", "uploadImage: KEY1=$key")
-
-                    storageReference.child(key + ".jpg").downloadUrl.addOnSuccessListener (
-                        OnSuccessListener { uri ->
-                            val hm = HashMap<String, Any>()
-                            hm.put(AppConsts.POST_Name_CONSTANT, imageName)
-                            hm.put(AppConsts.POST_ImageUri_CONSTANT, uri.toString())
-
-//                            Log.d("UploadCarActivity", "uploadImage: KEY2=$key")
-
-                            databaseReference.child(key).setValue(hm)
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Data Saved Successfully", Toast.LENGTH_LONG).show()
-
-                                    val intent = Intent(this, HomeActivity::class.java)
-                                    startActivity(intent)
-                                }
-                        })
-                }
-                .addOnProgressListener (OnProgressListener { snapshot ->
-                    var progress:Int = ((snapshot.bytesTransferred*100.0)/snapshot.totalByteCount).toInt()
-                    textViewProgress.text = progress.toString() + "%"
-                    progressBar.progress = progress
-                })
-                .addOnCanceledListener {
-                    Toast.makeText(this, "Data could not be Saved", Toast.LENGTH_LONG).show()
-                }
-        }
-
-
+                                val intent = Intent(this, HomeActivity::class.java)
+                                startActivity(intent)
+                            }
+                    }
+            }
+            .addOnProgressListener { snapshot ->
+                val progress: Int = ((snapshot.bytesTransferred * 100.0) / snapshot.totalByteCount).toInt()
+                textViewProgress.text = progress.toString() + "%"
+                progressBar.progress = progress
+            }
+            .addOnCanceledListener {
+                Toast.makeText(this, "Data could not be Saved", Toast.LENGTH_LONG).show()
+            }
     }
+
+
+//    private fun uploadImage(imageName: String) {
+//        textViewProgress.visibility = View.VISIBLE
+//        progressBar.visibility = View.VISIBLE
+//
+//        var key = databaseReference.push().key
+//
+////        Log.d("UploadCarActivity", "uploadImage: KEY=$key")
+//
+//        if (key != null) {
+//            storageReference.child(key + ".jpg").putFile(imageUri)
+//                .addOnSuccessListener {
+//
+////                    Log.d("UploadCarActivity", "uploadImage: KEY1=$key")
+//
+//                    storageReference.child(key + ".jpg").downloadUrl.addOnSuccessListener (
+//                        OnSuccessListener { uri ->
+//                            val hm = HashMap<String, Any>()
+//                            hm.put(AppConsts.POST_Name_CONSTANT, imageName)
+//                            hm.put(AppConsts.POST_ImageUri_CONSTANT, uri.toString())
+//
+////                            Log.d("UploadCarActivity", "uploadImage: KEY2=$key")
+//
+//                            databaseReference.child(key).setValue(hm)
+//                                .addOnSuccessListener {
+//                                    Toast.makeText(this, "Data Saved Successfully", Toast.LENGTH_LONG).show()
+//
+//                                    val intent = Intent(this, HomeActivity::class.java)
+//                                    startActivity(intent)
+//                                }
+//                        })
+//                }
+//                .addOnProgressListener (OnProgressListener { snapshot ->
+//                    var progress:Int = ((snapshot.bytesTransferred*100.0)/snapshot.totalByteCount).toInt()
+//                    textViewProgress.text = progress.toString() + "%"
+//                    progressBar.progress = progress
+//                })
+//                .addOnCanceledListener {
+//                    Toast.makeText(this, "Data could not be Saved", Toast.LENGTH_LONG).show()
+//                }
+//        }
+//
+//
+//    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

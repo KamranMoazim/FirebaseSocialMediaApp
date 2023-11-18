@@ -21,12 +21,27 @@
         android:id="@+id/detail_name_single_car_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Car"
+        android:text="My Post"
         android:textSize="25dp"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginTop="225dp"
+        android:layout_below="@+id/detail_image_single_car_view"
+        />
+
+    <TextView
+        android:id="@+id/detail_description_single_car_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Post Description is very long..."
+        android:textSize="15dp"
+        android:textAlignment="center"
+        android:padding="10dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_below="@+id/detail_name_single_car_view"
         />
 
     <Button
@@ -34,13 +49,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Delete Post"
-        android:layout_below="@+id/detail_name_single_car_view"
+        android:layout_below="@+id/detail_description_single_car_view"
         android:layout_marginHorizontal="40dp"
         android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         android:backgroundTint="@color/white"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         />
 
 
