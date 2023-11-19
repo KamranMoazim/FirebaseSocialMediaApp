@@ -5,15 +5,21 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.firebasechatapp.Adapters.PostRecyclerViewAdapter
 import com.example.firebasechatapp.ViewHolders.PostViewHolder
 import com.example.firebasechatapp.data.Post
 import com.example.firebasechatapp.data.User
+import com.example.firebasechatapp.repositories.PostRepository
+import com.example.firebasechatapp.repositories.UserRepository
 import com.example.firebasechatapp.utils.AppConsts
 import com.example.firebasechatapp.utils.FirebaseUtils
 import com.example.firebasechatapp.utils.FriendsDatabaseHelper
@@ -28,18 +34,29 @@ import com.google.firebase.firestore.CollectionReference
 
 class HomeActivity : AppCompatActivity() {
 
+    private lateinit var progressBar: ProgressBar
+    private fun showLoader() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideLoader() {
+        progressBar.visibility = View.GONE
+    }
+
+
     private lateinit var databaseReference: DatabaseReference
     private lateinit var firestoreReference: CollectionReference
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
+
+    private lateinit var postRepository: PostRepository
 
     private lateinit var inputSearch:EditText
     private lateinit var carRecyclerView:RecyclerView
     private lateinit var floatingAddBtn:FloatingActionButton
     private lateinit var floatingProfileBtn:FloatingActionButton
     private lateinit var floatingLogoutBtn:FloatingActionButton
-//    private lateinit var options:FirebaseRecyclerOptions<Post>
-//    private lateinit var adapter:FirebaseRecyclerAdapter<Post, PostViewHolder>
+
     private lateinit var options:FirestoreRecyclerOptions<Post>
     private lateinit var adapter: FirestoreRecyclerAdapter<Post, PostViewHolder>
 
@@ -48,10 +65,14 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        progressBar = findViewById(R.id.loadingProgressBarLayout)
+
+        postRepository = PostRepository(this)
+
         sharedPreferencesHelper = SharedPreferencesHelper(this)
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
 
-//        databaseReference = Firebase.database.getReference().child(AppConsts.POSTS_CONSTANT).child(savedCredentials.third!!.UserId)
+
         databaseReference = FirebaseUtils.getPostsReferenceForUser(savedCredentials.third!!.UserId)
         firestoreReference = FirebaseUtils.allPostsCollectionReference()
 
@@ -93,7 +114,7 @@ class HomeActivity : AppCompatActivity() {
         carRecyclerView.setHasFixedSize(true)
 
 
-
+        loadData("")
 
 
 
@@ -122,51 +143,38 @@ class HomeActivity : AppCompatActivity() {
         })
 
 
-        loadData("")
+
     }
 
     private fun loadData(data: String) {
 
-        var myFriendsIds = mutableListOf<String>()
+        showLoader()
+
+        val myFriendsIds = mutableListOf<String>()
         myFriendsIds.addAll(savedCredentials.third!!.MyFriendsIds)
         // myFriendsIds.add(savedCredentials.third!!.UserId) // including myself, to view my posts to
 
         if (myFriendsIds.isNotEmpty()) {
 
-            val query = firestoreReference
-                .whereIn("AuthorId", myFriendsIds)
-                .orderBy(AppConsts.POST_Name_CONSTANT)
-                .startAt(data)
-                .endAt(data + "\uf8ff")
-
-            options = FirestoreRecyclerOptions.Builder<Post>()
-                .setQuery(query, Post::class.java)
-                .build()
-
+            options = postRepository.getPostsForUser(data)
             adapter = PostRecyclerViewAdapter(options)
             carRecyclerView.adapter = adapter
             adapter.startListening()
 
-        } else {
+            hideLoader()
 
+            Log.d("adapter.itemCount", adapter.itemCount.toString())
+
+
+        } else {
+            myToast("Please Add Some Friends to see their Posts")
         }
 
 
     }
 
 
-//    private fun loadData(data:String) {
-//
-//        var query = databaseReference.orderByChild(AppConsts.POST_Name_CONSTANT).startAt(data).endAt(data+"\uf8ff")
-//
-//        options =
-//            FirebaseRecyclerOptions.Builder<Post>().setQuery(query, Post::class.java)
-//                .build()
-//
-//        adapter = PostRecyclerViewAdapter(options)
-//        carRecyclerView.adapter = adapter
-//        adapter.startListening()
-//    }
-
-
+    private fun myToast(msg:String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
 }

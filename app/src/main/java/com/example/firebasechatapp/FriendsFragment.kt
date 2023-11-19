@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.firebasechatapp.Adapters.FriendsRecyclerViewAdapter
@@ -16,6 +18,7 @@ import com.example.firebasechatapp.ViewHolders.FriendsViewHolder
 import com.example.firebasechatapp.ViewHolders.PostViewHolder
 import com.example.firebasechatapp.data.Post
 import com.example.firebasechatapp.data.User
+import com.example.firebasechatapp.repositories.UserRepository
 import com.example.firebasechatapp.utils.AppConsts
 import com.example.firebasechatapp.utils.FirebaseUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
@@ -29,11 +32,24 @@ import com.google.firebase.firestore.CollectionReference
 
 class FriendsFragment : Fragment() {
 
+
+    private lateinit var progressBar: ProgressBar
+    private fun showLoader() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideLoader() {
+        progressBar.visibility = View.GONE
+    }
+
+
     private lateinit var myFriendsRecyclerView : RecyclerView
     private lateinit var databaseReference: DatabaseReference
     private lateinit var firestoreReference: CollectionReference
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
+
+    private lateinit var userRepository: UserRepository
 
 //    private lateinit var options:FirebaseRecyclerOptions<User>
 //    private lateinit var adapter: FirebaseRecyclerAdapter<User, FriendsViewHolder>
@@ -45,7 +61,13 @@ class FriendsFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false)
+        var view = inflater.inflate(R.layout.fragment_friends, container, false)
+
+        progressBar = view.findViewById(R.id.loadingProgressBarLayout)
+
+        userRepository = UserRepository(requireContext())
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,8 +77,8 @@ class FriendsFragment : Fragment() {
         myFriendsRecyclerView = view.findViewById(R.id.my_friends_recycler_view)
         sharedPreferencesHelper = SharedPreferencesHelper(requireContext())
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
-        databaseReference = FirebaseUtils.getDatabaseReference().child("Users")
-        firestoreReference = FirebaseUtils.allUsersCollectionReference()
+//        databaseReference = FirebaseUtils.getDatabaseReference().child("Users")
+//        firestoreReference = FirebaseUtils.allUsersCollectionReference()
 
 
         myFriendsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -80,78 +102,36 @@ class FriendsFragment : Fragment() {
 
 
     private fun loadData(data: String) {
+        showLoader()
         users = mutableListOf()
 
         val myFriendsIds = savedCredentials.third!!.MyFriendsIds
 
         if (myFriendsIds.isNotEmpty()) {
-            firestoreReference
-                .whereIn("userId", myFriendsIds)
-                .get()
-                .addOnSuccessListener { querySnapshot ->
-                    // Check if there is data in the snapshot
-                    if (!querySnapshot.isEmpty) {
-                        // Data exists, log or process it
-                        for (documentSnapshot in querySnapshot.documents) {
-                            val user = documentSnapshot.toObject(User::class.java)
-                            // Log or process each user
-                            Log.d("UserData", "User: $user")
-                            if (user?.UserId != savedCredentials.third?.UserId) {
-//                            users.add(user!!)
-                                (users as MutableList<User>).add(user!!)
-                            }
+
+            userRepository.fetchMyFriends(){
+                success, message, userList ->
+                    run {
+//                        myToast(message)
+                        if (success){
+                            users = userList
+                            adapter.updateUserLis(userList)
                         }
-                        adapter.updateUserLis(users)
-                    } else {
-                        // No data found
-                        Log.d("UserData", "No users found")
+                        hideLoader()
                     }
                 }
-                .addOnFailureListener { exception ->
-                    // Handle errors here
-                    Log.e("UserData", "Error getting users: ${exception.message}")
-                }
+
         } else {
             // you have no friends
+            myToast("You have no friends")
         }
 
 
     }
 
 
-//    private fun loadData(data:String) {
-//
-//
-//        var query = databaseReference
-//        users = mutableListOf()
-//
-//        query.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                // Check if there is data in the snapshot
-//                if (dataSnapshot.exists()) {
-//                    // Data exists, log or process it
-//                    for (userSnapshot in dataSnapshot.children) {
-//                        val user = userSnapshot.getValue(User::class.java)
-//                        // Log or process each user
-//                        Log.d("UserData", "User: $user")
-//                        if (user!!.UserId != savedCredentials.third!!.UserId){
-//                            (users as MutableList<User>).add(user!!)
-//                        }
-//                    }
-//                    adapter.updateUserLis(users)
-//                } else {
-//                    // No data found
-//                    Log.d("UserData", "No users found")
-//                }
-//            }
-//
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                // Handle errors here
-//                Log.e("UserData", "Error getting users: ${databaseError.message}")
-//            }
-//        })
-//
-//    }
-
+    private fun myToast(msg:String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+    }
 
 }

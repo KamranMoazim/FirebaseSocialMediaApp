@@ -19,7 +19,7 @@ class ProfileActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.navigation_home -> {
                     // Replace the current fragment with HomeFragment
-                    supportFragmentManager.beginTransaction()
+                        supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, FriendsFragment())
                         .commit()
                     return@setOnNavigationItemSelectedListener true

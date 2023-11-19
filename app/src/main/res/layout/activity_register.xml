@@ -7,8 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
+    <ProgressBar
+        android:id="@+id/loadingProgressBarLayout"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/custom_progress_drawable"
+        />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/app_icon"
+        android:layout_marginTop="40dp"
+        />
+
     <EditText
         android:id="@+id/editTextEmail"
+        android:inputType="textEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

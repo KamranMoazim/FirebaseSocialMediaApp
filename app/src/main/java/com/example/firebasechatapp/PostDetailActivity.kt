@@ -10,8 +10,10 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.firebasechatapp.data.Post
 import com.example.firebasechatapp.data.User
+import com.example.firebasechatapp.repositories.PostRepository
 import com.example.firebasechatapp.utils.AppConsts
 import com.example.firebasechatapp.utils.FirebaseUtils
+import com.example.firebasechatapp.utils.MyUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,11 +25,12 @@ import com.squareup.picasso.Picasso
 
 class PostDetailActivity : AppCompatActivity() {
 
-    private lateinit var databaseReference: DatabaseReference
-    private lateinit var firestoreReference: CollectionReference
-    private lateinit var storageReference: StorageReference
+//    private lateinit var firestoreReference: CollectionReference
+//    private lateinit var storageReference: StorageReference
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
+
+    private lateinit var postRepository: PostRepository
 
     private lateinit var detailViewImage:ImageView
     private lateinit var detailNameTextView:TextView
@@ -38,19 +41,18 @@ class PostDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_detail)
 
-        var postKey = intent.getStringExtra(AppConsts.POST_KEY_CONSTANT)!!
+        postRepository = PostRepository(this)
 
-//        Toast.makeText(this, postKey, Toast.LENGTH_LONG).show()
 
-        // databaseReference = Firebase.database.getReference().child("Car").child(carKey)
+        var postFromIntent = MyUtils.getPostFromIntent(intent)
+
+
         sharedPreferencesHelper = SharedPreferencesHelper(this)
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
 
-        // databaseReference = Firebase.database.getReference().child(AppConsts.POSTS_CONSTANT).child(savedCredentials.third!!.UserId).child(postKey)
-        // storageReference = Firebase.storage.getReference().child(AppConsts.POST_Image_CONSTANT).child(postKey + ".jpg")
-        databaseReference = FirebaseUtils.getPostReference(postKey, savedCredentials.third!!.UserId)
-        storageReference = FirebaseUtils.getStorageReferenceForPostImage(postKey)
-        firestoreReference = FirebaseUtils.allPostsCollectionReference()
+
+//        storageReference = FirebaseUtils.getStorageReferenceForPostImage(postFromIntent.PostID)
+//        firestoreReference = FirebaseUtils.allPostsCollectionReference()
 
 
         detailViewImage = findViewById(R.id.detail_image_single_car_view)
@@ -60,139 +62,45 @@ class PostDetailActivity : AppCompatActivity() {
 
 
 
-
-//        Toast.makeText(this@CarDetailActivity, carKey, Toast.LENGTH_SHORT).show()
-
-//        Log.d("CarDetailActivity", carKey)
-
+        detailNameTextView.text = postFromIntent.PostName
+        detailDescriptionTextView.text = postFromIntent.PostDescription
+        Picasso.get().load(postFromIntent.ImageUri).into(detailViewImage)
 
 
 
-
-        firestoreReference.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                // Handle the error here if needed
-                Toast.makeText(this@PostDetailActivity, "Error Getting Data", Toast.LENGTH_LONG).show()
-                return@addSnapshotListener
-            }
-
-            if (snapshot != null && !snapshot.isEmpty) {
-                // Assuming there is only one document in the collection
-                val document = snapshot.documents[0]
-
-                val post = document.toObject(Post::class.java)
-
-                if (post != null) {
-                    // Now you can use the 'post' object
-                    val postName = post.PostName
-                    val imageUri = post.ImageUri
-                    val postDescription = post.PostDescription
-                    val postAuthor = post.AuthorId
-
-                    detailNameTextView.text = postName
-                    detailDescriptionTextView.text = postDescription
-                    Picasso.get().load(imageUri).into(detailViewImage)
-
-                    if (postAuthor == savedCredentials.third!!.UserId) {
-                        // If shouldHideButton is true, hide the button
-                        detailViewDeleteBtn.visibility = View.VISIBLE
-                    } else {
-                        // If shouldHideButton is false, show the button
-                        detailViewDeleteBtn.visibility = View.GONE
-                    }
-
-                    // Do something with the data...
-                } else {
-                    // Handle the case where the value is null or not of the expected type
-                }
-            }
+        if (postFromIntent.AuthorId == savedCredentials.third!!.UserId) {
+            // If the post author is the current user, show the delete button
+            detailViewDeleteBtn.visibility = View.VISIBLE
+        } else {
+            // If the post author is not the current user, hide the delete button
+            detailViewDeleteBtn.visibility = View.GONE
         }
+
+
 
         detailViewDeleteBtn.setOnClickListener {
-            firestoreReference.document(postKey).delete()
-                .addOnSuccessListener {
-                    storageReference.delete()
-                        .addOnSuccessListener {
-                            val intent = Intent(applicationContext, HomeActivity::class.java)
-                            startActivity(intent)
-                            Toast.makeText(this@PostDetailActivity, "Deleted Data Successfully", Toast.LENGTH_LONG).show()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this@PostDetailActivity, "Error Deleting Image", Toast.LENGTH_LONG).show()
-                        }
+
+            postRepository.deleteUsersPost(postFromIntent.PostID) {
+                success, message ->
+                run {
+                    if (success) {
+                        goToProfileActivity()
+                    } else {
+                        myToast(message)
+                    }
                 }
-                .addOnFailureListener {
-                    Toast.makeText(this@PostDetailActivity, "Error Deleting Data", Toast.LENGTH_LONG).show()
-                }
+            }
         }
 
+    }
 
+    private fun goToProfileActivity() {
+        myToast("Deleted Data Successfully")
+        val intent = Intent(applicationContext, ProfileActivity::class.java)
+        startActivity(intent)
+    }
 
-
-
-
-
-
-
-
-
-//        databaseReference.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//
-////                Toast.makeText(this@CarDetailActivity, dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show()
-//
-////                Log.d("CarDetailActivity", dataSnapshot.getValue().toString())
-//
-//                // This method is called once with the initial value and again whenever data at this location is updated.
-//                if (dataSnapshot.exists()) {
-//
-//                    val dataSnapshotValue = dataSnapshot.getValue(Post::class.java)
-//
-////                    Toast.makeText(this@CarDetailActivity, dataSnapshotValue!!.CarName, Toast.LENGTH_SHORT).show()
-//
-//
-//                    if (dataSnapshotValue != null) {
-//                        // Now you can use the 'dataSnapshotValue' object
-//                        val postName = dataSnapshotValue.PostName
-//                        val imageUri = dataSnapshotValue.ImageUri
-//
-//                        detailViewTextView.text = postName
-//                        Picasso.get().load(imageUri).into(detailViewImage)
-//
-////                        Toast.makeText(this@CarDetailActivity, "here2", Toast.LENGTH_SHORT).show()
-//
-//                        // Do something with the data...
-//                    } else {
-//                        // Handle the case where the value is null or not of the expected type
-//                    }
-//                }
-//            }
-//
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                // Failed to read value
-//                // Handle the error here if needed
-//                Toast.makeText(this@PostDetailActivity, "Error Getting Data", Toast.LENGTH_LONG).show()
-//            }
-//
-//        })
-//
-//
-//        detailViewDeleteBtn.setOnClickListener{
-//            databaseReference.removeValue()
-//                .addOnSuccessListener {
-//                    storageReference.delete()
-//                        .addOnSuccessListener {
-//                            var intent = Intent(applicationContext, HomeActivity::class.java)
-//                            startActivity(intent)
-//                            Toast.makeText(this@PostDetailActivity, "Deleted Data Successfully", Toast.LENGTH_LONG).show()
-//                        }
-//                        .addOnFailureListener{
-//                            Toast.makeText(this@PostDetailActivity, "Error Deleting Image", Toast.LENGTH_LONG).show()
-//                        }
-//                }
-//                .addOnFailureListener {
-//                    Toast.makeText(this@PostDetailActivity, "Error Deleting Data", Toast.LENGTH_LONG).show()
-//                }
-//        }
+    private fun myToast(msg:String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }

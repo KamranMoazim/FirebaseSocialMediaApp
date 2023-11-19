@@ -3,25 +3,31 @@ package com.example.firebasechatapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.firebasechatapp.data.User
+import com.example.firebasechatapp.repositories.UserRepository
 import com.example.firebasechatapp.utils.AppConsts
 import com.example.firebasechatapp.utils.FirebaseUtils
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.database
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
-    private lateinit var databaseReference: DatabaseReference
-    private lateinit var firestoreReference: CollectionReference
+    private lateinit var progressBar: ProgressBar
+    private fun showLoader() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideLoader() {
+        progressBar.visibility = View.GONE
+    }
+
 
     private lateinit var editTextEmail: EditText
     private lateinit var editTextPassword: EditText
@@ -32,17 +38,19 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var editTextAge: EditText
     private lateinit var buttonMoveToLogin:TextView
 
+    private lateinit var userRepository: UserRepository
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // auth = FirebaseAuth.getInstance()
-        // databaseReference = Firebase.database.getReference().child(AppConsts.USERS_CONSTANT)
-        auth = FirebaseUtils.getFirebaseAuthInstance()
-        databaseReference = FirebaseUtils.getDatabaseReference().child(AppConsts.USERS_CONSTANT)
-        firestoreReference = FirebaseUtils.allUsersCollectionReference()
+        progressBar = findViewById(R.id.loadingProgressBarLayout)
+
+        userRepository = UserRepository(this)
+
 
         editTextEmail = findViewById(R.id.editTextEmail)
         editTextPassword = findViewById(R.id.editTextPassword)
@@ -55,7 +63,8 @@ class RegisterActivity : AppCompatActivity() {
 
 
         buttonRegister.setOnClickListener {
-            registerUser()
+            showLoader()
+            registerUserByRepo()
         }
 
         buttonMoveToLogin.setOnClickListener {
@@ -69,7 +78,7 @@ class RegisterActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun registerUser() {
+    private fun registerUserByRepo(){
         val email = editTextEmail.text.toString()
         val password = editTextPassword.text.toString()
         val username = editTextUsername.text.toString()
@@ -79,62 +88,24 @@ class RegisterActivity : AppCompatActivity() {
 
         // Check for empty fields
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
+            myToast("Please enter both email and password")
             return
         }
 
-        // Firebase Authentication to register a new user with email and password
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-
-                    // Registration successful, get the UID
-                    val uid = FirebaseAuth.getInstance().currentUser?.uid
-
-                    // Save additional details to the database
-                    if (uid != null) {
-//                        val userRef = databaseReference.child(uid)
-                        val userData = User(UserName = username, FullName = fullName, About = about, Age = age, UserId = uid, MyFriendsIds = listOf())
-//
-//                        userRef.setValue(userData)
-//                            .addOnCompleteListener { databaseTask ->
-//                                if (databaseTask.isSuccessful) {
-//                                    // User details saved to the database
-//                                    goToLoginActivity()
-//                                    finish()
-//                                } else {
-//                                    // Handle database error
-//                                }
-//                            }
-
-                        firestoreReference.add(userData).addOnCompleteListener{ task ->
-                            run {
-                                if (task.isSuccessful) {
-                                    // User details saved to the database
-                                    goToLoginActivity()
-                                    finish()
-                                } else {
-                                    // Handle database error
-                                    Toast.makeText(
-                                        this,
-                                        "Registration failed: Please Try Again Later",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
+        userRepository.registerUser(email, password, username, fullName, about, age){
+                success, message ->
+                    run {
+                        hideLoader()
+                        myToast(message)
+                        if (success) {
+                            goToLoginActivity()
+                            finish()
                         }
                     }
-
-                    // Registration success
-                    Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
-                } else {
-                    // If registration fails, display a message to the user.
-                    Toast.makeText(
-                        this,
-                        "Registration failed: ${task.exception?.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
-            }
+    }
+
+    private fun myToast(msg:String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }

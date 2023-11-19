@@ -5,9 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".ProfileFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/profile_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <!-- First LinearLayout -->
@@ -65,5 +70,18 @@
             android:textStyle="bold"
             android:padding="10dp" />
     </LinearLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/all_my_posts"
+            android:layout_below="@+id/profile_details"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/single_post_view"
+            />
+
+
+    </RelativeLayout>
 
 </FrameLayout>

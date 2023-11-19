@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import com.example.firebasechatapp.data.ChatRoom
+import com.example.firebasechatapp.data.Post
 import com.example.firebasechatapp.data.User
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -40,7 +41,6 @@ object MyUtils {
         intent.putExtra("About", user.About)
     }
 
-
     fun getUserFromIntent(intent:Intent):User{
         // Create a new User object
         val user = User()
@@ -55,6 +55,32 @@ object MyUtils {
         // Return the User object
         return user
     }
+
+    fun passPostAsIntent(intent:Intent, post:Post){
+        intent.putExtra("PostID", post.PostID)
+        intent.putExtra("AuthorId", post.AuthorId)
+        intent.putExtra("PostName", post.PostName)
+        intent.putExtra("PostDescription", post.PostDescription)
+        intent.putExtra("ImageUri", post.ImageUri)
+    }
+
+    fun getPostFromIntent(intent:Intent):Post{
+        // Create a new Post object
+        val post = Post()
+
+        // Retrieve data from the Intent and set it on the User object
+        post.PostID = intent.getStringExtra("PostID") ?: ""
+        post.AuthorId = intent.getStringExtra("AuthorId") ?: ""
+        post.PostDescription = intent.getStringExtra("PostDescription") ?: ""
+        post.PostName = intent.getStringExtra("PostName") ?: ""
+        post.ImageUri = intent.getStringExtra("ImageUri") ?: ""
+
+        // Return the Post object
+        return post
+    }
+
+
+
 
     fun showToast(message: String, ctx: Context) {
         Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show()

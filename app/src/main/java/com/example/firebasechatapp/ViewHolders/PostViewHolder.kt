@@ -23,8 +23,8 @@ class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         postDescriptionTextView = itemView.findViewById(R.id.description_single_post_view)
         uriTextView = itemView.findViewById(R.id.image_single_post_view)
 
-        nameTextView.text = post.PostName
-        postDescriptionTextView.text = MyUtils.getSubString(post.PostDescription, 70)
+        nameTextView.text = MyUtils.getSubString(post.PostName, 20) + "..."
+        postDescriptionTextView.text = MyUtils.getSubString(post.PostDescription, 70) + "..."
 //        uriTextView.setImageURI(car.ImageUri)
         Picasso.get().load(post.ImageUri).into(uriTextView)
     }

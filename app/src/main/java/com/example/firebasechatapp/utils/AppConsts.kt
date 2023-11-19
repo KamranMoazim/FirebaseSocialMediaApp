@@ -7,6 +7,7 @@ class AppConsts {
         const val CHAT_ROOM_CONSTANT = "ChatRooms"
         const val CHATS_CONSTANT = "Chats"
         const val POST_KEY_CONSTANT = "PostKey"
+        const val POST_ID_CONSTANT = "PostID"
         const val POST_Name_CONSTANT = "PostName"
         const val POST_Image_CONSTANT = "PostImage"
         const val POST_ImageUri_CONSTANT = "ImageUri"

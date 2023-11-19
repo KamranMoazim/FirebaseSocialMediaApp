@@ -2,6 +2,7 @@ package com.example.firebasechatapp.data
 
 
 class Post {
+    var PostID: String = ""
     var PostName: String = ""
     var PostDescription: String = ""
     var ImageUri: String = ""

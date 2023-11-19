@@ -55,11 +55,7 @@ class SearchUserActivity : AppCompatActivity() {
         backBtn.setOnClickListener { onBackPressed() }
 
         searchBtn.setOnClickListener{
-            FirebaseUtils.searchUsersByUsername(searchInput.text.toString(), myFriendsIds) { filteredUsers ->
-                // Process the list of users returned from the search
-                users = filteredUsers.toMutableList()
-                adapter.updateAddNewFriendsList(filteredUsers)
-            }
+            searchUsers(searchInput.text.toString(), myFriendsIds)
         }
 
 
@@ -67,6 +63,19 @@ class SearchUserActivity : AppCompatActivity() {
 
         setupChatRecyclerView()
         loadData("")
+
+    }
+
+    private fun searchUsers(
+        userNameToSearch:String,
+        peoplesToSkip:List<String>
+    ) {
+
+        FirebaseUtils.searchUsersByUsername(userNameToSearch, peoplesToSkip) { filteredUsers ->
+            // Process the list of users returned from the search
+            users = filteredUsers.toMutableList()
+            adapter.updateAddNewFriendsList(filteredUsers)
+        }
 
     }
 
@@ -82,15 +91,8 @@ class SearchUserActivity : AppCompatActivity() {
             val existingUsers = mutableListOf<User>()
 
             FirebaseUtils.getTop10UsersByUsername(existingUsers, myFriendsIds) { filteredUsers ->
-                // Handle the list of users here
-                // 'users' contains the top 10 users (excluding skipped user IDs)
-                // 'existingUsers' has been updated within the function
                 users = filteredUsers.toMutableList()
                 adapter.updateAddNewFriendsList(filteredUsers)
-//                Log.d("SearchUserActivity", "myFriendsIds: ${myFriendsIds}")
-//                Log.d("SearchUserActivity", "Total user: ${users.size}")
-//                Log.d("SearchUserActivity", "Total user: ${users}")
-//                Log.d("SearchUserActivity", "Total existingUsers: ${existingUsers}")
             }
 
         } else {

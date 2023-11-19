@@ -8,7 +8,29 @@
     tools:context=".LoginActivity">
 
 
+    <ProgressBar
+        android:id="@+id/loadingProgressBarLayout"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/custom_progress_drawable"
+        />
+
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/app_icon"
+        android:layout_marginTop="100dp"
+        />
+
     <EditText
+        android:layout_below="@+id/icon"
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,5 +70,7 @@
         android:textColor="@color/colorPrimary"
         android:clickable="true"
         android:onClick="moveToRegisterScreen"/>
+
+
 
 </RelativeLayout>
