@@ -3,46 +3,103 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/colorPrimary"
     android:layout_marginBottom="8dp">
 
 
-    <ImageView
-        android:id="@+id/image_single_post_view"
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
-        android:src="@drawable/upload_icon2"
-        android:scaleType="fitXY"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
-        />
 
-    <TextView
-        android:id="@+id/name_single_post_view"
-        android:layout_width="wrap_content"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/post_det"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Post"
-        android:textSize="25dp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="275dp"
+        android:orientation="vertical"
         android:background="@color/colorPrimary"
-        />
+        android:layout_marginBottom="8dp">
 
-    <TextView
-        android:id="@+id/description_single_post_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textAlignment="center"
-        android:text="My Post Description Post Description Post Description Post Description Post Description Post Description"
-        android:textSize="15dp"
-        android:layout_below="@+id/name_single_post_view"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:background="@color/colorPrimary"
-        />
+
+        <ImageView
+            android:id="@+id/image_single_post_view"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:src="@drawable/upload_icon2"
+            android:scaleType="fitXY"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            />
+
+        <TextView
+            android:id="@+id/name_single_post_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Post"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="275dp"
+            android:background="@color/colorPrimary"
+            />
+
+        <TextView
+            android:id="@+id/description_single_post_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:text="My Post Description Post Description Post Description Post Description Post Description Post Description"
+            android:textSize="15dp"
+            android:layout_below="@+id/name_single_post_view"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorPrimary"
+            />
+
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+    android:layout_below="@+id/post_det"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+        <ImageButton
+            android:id="@+id/post_like_btn"
+            android:src="@drawable/ic_like"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/colorPrimary"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text=""
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            />
+
+        <TextView
+            android:id="@+id/like_count_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingStart="5dp"/>
+
+        <ImageButton
+            android:id="@+id/post_comment_btn"
+            android:src="@drawable/ic_comment"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/colorPrimary"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text=""
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            />
+
+    </LinearLayout>
 
 </RelativeLayout>

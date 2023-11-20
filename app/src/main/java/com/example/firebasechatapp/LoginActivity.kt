@@ -38,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var editTextPassword: EditText
     private lateinit var buttonLogin: Button
     private lateinit var buttonMoveToRegister:TextView
+    private lateinit var buttonMoveToForgotPasswordScreen:TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,14 +61,22 @@ class LoginActivity : AppCompatActivity() {
         editTextPassword = findViewById(R.id.editTextPassword)
         buttonLogin = findViewById(R.id.buttonLogin)
         buttonMoveToRegister = findViewById(R.id.textViewRegisterLink)
+        buttonMoveToForgotPasswordScreen = findViewById(R.id.textForgotPasswordLink)
 
         buttonLogin.setOnClickListener {
             showLoader() // Show the loader before starting the login process
             loginUserByRepo()
         }
+
         buttonMoveToRegister.setOnClickListener {
             // Move to the RegisterActivity
             val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
+
+        buttonMoveToForgotPasswordScreen.setOnClickListener {
+            // Move to the RegisterActivity
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
             startActivity(intent)
         }
     }

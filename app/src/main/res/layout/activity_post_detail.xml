@@ -2,61 +2,123 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/colorPrimary"
     android:layout_marginBottom="8dp">
 
 
-    <ImageView
-        android:id="@+id/detail_image_single_car_view"
+    <RelativeLayout
+        android:id="@+id/post_detail_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+        <ImageView
+            android:id="@+id/detail_image_single_car_view"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:src="@drawable/upload_icon2"
+            android:scaleType="fitXY"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            />
+
+        <TextView
+            android:id="@+id/detail_name_single_car_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Post"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_below="@+id/detail_image_single_car_view"
+            />
+
+        <TextView
+            android:id="@+id/detail_description_single_car_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Post Description is very long..."
+            android:textSize="15dp"
+            android:textAlignment="center"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_below="@+id/detail_name_single_car_view"
+            />
+
+        <Button
+            android:id="@+id/deletebtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Post"
+            android:layout_below="@+id/detail_description_single_car_view"
+            android:layout_marginHorizontal="40dp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:backgroundTint="@color/white"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="15dp"
+            />
+    </RelativeLayout>
+
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBarLayout"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/custom_progress_drawable"
+        />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        tools:listitem="@layout/single_comment_view"
+        android:id="@+id/post_all_comments_recycler"
+        android:layout_below="@+id/post_detail_container"
+        android:layout_above="@+id/comment_box_bottom_layout"
         android:layout_width="wrap_content"
-        android:layout_height="250dp"
-        android:src="@drawable/upload_icon2"
-        android:scaleType="fitXY"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
+        android:layout_height="wrap_content"
         />
 
-    <TextView
-        android:id="@+id/detail_name_single_car_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My Post"
-        android:textSize="25dp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_below="@+id/detail_image_single_car_view"
-        />
 
-    <TextView
-        android:id="@+id/detail_description_single_car_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My Post Description is very long..."
-        android:textSize="15dp"
-        android:textAlignment="center"
-        android:padding="10dp"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_below="@+id/detail_name_single_car_view"
-        />
-
-    <Button
-        android:id="@+id/deletebtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete Post"
-        android:layout_below="@+id/detail_description_single_car_view"
-        android:layout_marginHorizontal="40dp"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        android:backgroundTint="@color/white"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="15dp"
-        />
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:padding="8dp"
+        android:id="@+id/comment_box_bottom_layout"
+        >
+        <EditText
+            android:id="@+id/actual_comment_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Write Comment Here"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/edit_text_rounded_corner"
+            android:elevation="4dp"
+            android:padding="10dp"
+            android:layout_toLeftOf="@+id/comment_send_btn"
+            android:layout_marginStart="10dp"
+            />
+        <ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_send"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/colorPrimary"
+            android:id="@+id/comment_send_btn"
+            />
+    </RelativeLayout>
 
 
 

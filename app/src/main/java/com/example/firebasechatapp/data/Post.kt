@@ -7,6 +7,7 @@ class Post {
     var PostDescription: String = ""
     var ImageUri: String = ""
     var AuthorId: String = ""
+    var PeopleLikedPost: List<String> = listOf()
 
     constructor() // Required empty constructor for Firebase
 

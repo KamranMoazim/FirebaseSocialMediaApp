@@ -124,6 +124,7 @@ class FriendsFragment : Fragment() {
         } else {
             // you have no friends
             myToast("You have no friends")
+            hideLoader()
         }
 
 

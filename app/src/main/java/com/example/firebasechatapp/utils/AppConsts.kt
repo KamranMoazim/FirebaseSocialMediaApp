@@ -3,6 +3,7 @@ package com.example.firebasechatapp.utils
 class AppConsts {
     companion object {
         const val USERS_CONSTANT = "Users"
+        const val COMMENTS_CONSTANT = "Comments"
         const val POSTS_CONSTANT = "Posts"
         const val CHAT_ROOM_CONSTANT = "ChatRooms"
         const val CHATS_CONSTANT = "Chats"

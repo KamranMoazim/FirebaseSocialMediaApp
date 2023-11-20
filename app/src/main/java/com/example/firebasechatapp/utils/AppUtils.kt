@@ -1,5 +1,6 @@
 package com.example.firebasechatapp.utils
 
+import android.app.AlertDialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -26,6 +27,8 @@ object AppUtils {
             return networkInfo != null && networkInfo.isConnectedOrConnecting
         }
     }
+
+
 
 
 

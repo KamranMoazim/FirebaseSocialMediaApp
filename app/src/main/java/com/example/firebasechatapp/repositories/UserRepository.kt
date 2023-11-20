@@ -19,6 +19,21 @@ class UserRepository(
     private val firestoreReference: CollectionReference = FirebaseUtils.allUsersCollectionReference()
     private val sharedPreferencesHelper: SharedPreferencesHelper = SharedPreferencesHelper(this.context)
 
+
+
+    fun sendPasswordResetEmail(email: String, callback: (Boolean, String) -> Unit) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Password reset email sent successfully
+                    callback(true, "Password reset email sent successfully")
+                } else {
+                    // If the email address is not registered or other errors occur
+                    callback(false, "Failed to send password reset email: ${task.exception?.message}")
+                }
+            }
+    }
+
     fun registerUser(
         email: String,
         password: String,

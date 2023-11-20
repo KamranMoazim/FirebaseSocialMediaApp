@@ -168,6 +168,7 @@ class HomeActivity : AppCompatActivity() {
 
         } else {
             myToast("Please Add Some Friends to see their Posts")
+            hideLoader()
         }
 
 

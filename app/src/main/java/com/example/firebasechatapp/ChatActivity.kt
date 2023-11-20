@@ -193,31 +193,6 @@ class ChatActivity : AppCompatActivity() {
                         }
                 }
 
-//        FirebaseUtils.getChatRoomReference(chatroomId).get()
-//            .addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//
-//                    chatRoom = task.getResult().toObject(ChatRoom::class.java)
-//
-//                    if (chatRoom == null){
-//                        // first time chat
-//                        chatRoom = ChatRoom(
-//                            ChatRoomId = chatroomId,
-//                            LastMessageSenderId = "",
-//                            LastMessage = "",
-//                            LastMessageTimestamp = Timestamp.now(),
-//                            listOf(savedCredentials.third!!.UserId, otherUser.UserId)
-//                        )
-//                        FirebaseUtils.getChatRoomReference(chatroomId).set(chatRoom!!)
-//                    } else {
-//
-//                    }
-//
-//                } else {
-//
-//                }
-//            }
-
     }
 
     private fun myToast(msg:String) {

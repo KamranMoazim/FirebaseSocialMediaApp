@@ -42,6 +42,7 @@ class AddFriendsRecyclerViewAdapter(private val ctx: Context): RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: AddFriendsViewHolder, position: Int) {
+
         var addNewFriend = addNewFriendsList[position]
         holder.bindData(addNewFriend)
 
