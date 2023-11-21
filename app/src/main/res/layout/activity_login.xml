@@ -8,6 +8,7 @@
     tools:context=".LoginActivity">
 
 
+
     <ProgressBar
         android:id="@+id/loadingProgressBarLayout"
         android:layout_width="100dp"
@@ -81,7 +82,6 @@
         android:textColor="@color/colorPrimary"
         android:clickable="true"
         android:onClick="moveToForgotScreen"/>
-
 
 
 </RelativeLayout>

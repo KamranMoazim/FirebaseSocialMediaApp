@@ -38,12 +38,23 @@
         android:layout_below="@+id/search_input"
         />
 
-    <LinearLayout
-        android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="vertical">
+
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floating_profile_button"
@@ -78,7 +89,24 @@
             app:srcCompat="@drawable/ic_logout"
             app:tint="@android:color/white" />
 
-    </LinearLayout>
+
+            <!-- Single FAB for profile, add, and logout -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton"
+                android:layout_gravity="bottom|end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="@color/colorPrimary"
+                app:srcCompat="@drawable/ic_send"
+                app:tint="@android:color/white"/>
+
+            </LinearLayout>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 
 

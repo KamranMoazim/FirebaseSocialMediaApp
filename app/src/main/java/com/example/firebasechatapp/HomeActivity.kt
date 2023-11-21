@@ -53,12 +53,25 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var inputSearch:EditText
     private lateinit var carRecyclerView:RecyclerView
-    private lateinit var floatingAddBtn:FloatingActionButton
-    private lateinit var floatingProfileBtn:FloatingActionButton
-    private lateinit var floatingLogoutBtn:FloatingActionButton
+
+
+//    private lateinit var  mainFab: FloatingActionButton
+//    private lateinit var  profileFab: FloatingActionButton
+//    private lateinit var  addFab: FloatingActionButton
+//    private lateinit var  logoutFab: FloatingActionButton
+
+    private lateinit var floatingAddBtn: FloatingActionButton
+    private lateinit var floatingProfileBtn: FloatingActionButton
+    private lateinit var floatingLogoutBtn: FloatingActionButton
+    private lateinit var mainFab: FloatingActionButton
 
     private lateinit var options:FirestoreRecyclerOptions<Post>
     private lateinit var adapter: FirestoreRecyclerAdapter<Post, PostViewHolder>
+
+
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +99,29 @@ class HomeActivity : AppCompatActivity() {
         floatingLogoutBtn =  findViewById(R.id.floating_logout_button)
         floatingProfileBtn =  findViewById(R.id.floating_profile_button)
 
+        mainFab = findViewById(R.id.floatingActionButton)
+//        profileFab = findViewById(R.id.floating_profile_button)
+//        addFab = findViewById(R.id.floating_add_button)
+//        logoutFab = findViewById(R.id.floating_logout_button)
 
+        floatingProfileBtn.visibility = View.GONE
+        floatingAddBtn.visibility = View.GONE
+        floatingLogoutBtn.visibility = View.GONE
+
+        mainFab.setOnClickListener {
+            // Toggle visibility of other FABs
+            if (floatingProfileBtn.visibility == View.VISIBLE) {
+                floatingProfileBtn.visibility = View.GONE
+                floatingAddBtn.visibility = View.GONE
+                floatingLogoutBtn.visibility = View.GONE
+                mainFab.setImageResource(R.drawable.ic_send)
+            } else {
+                floatingProfileBtn.visibility = View.VISIBLE
+                floatingAddBtn.visibility = View.VISIBLE
+                floatingLogoutBtn.visibility = View.VISIBLE
+                mainFab.setImageResource(R.drawable.ic_cross)
+            }
+        }
 
 
         floatingProfileBtn.setOnClickListener{

@@ -109,7 +109,7 @@ class UserRepository(
             }
     }
 
-    private fun fetchUserDetailsUsingCollections(uid: String, callback: (User?) -> Unit) {
+    fun fetchUserDetailsUsingCollections(uid: String, callback: (User?) -> Unit) {
         firestoreReference
             .whereEqualTo("userId", uid)
             .get()

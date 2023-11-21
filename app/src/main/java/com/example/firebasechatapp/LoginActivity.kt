@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -40,6 +41,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var buttonMoveToRegister:TextView
     private lateinit var buttonMoveToForgotPasswordScreen:TextView
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -47,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.loadingProgressBarLayout)
 
         userRepository = UserRepository(this)
+
 
         sharedPreferencesHelper = SharedPreferencesHelper(this)
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
@@ -81,7 +85,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
     private fun loginUserByRepo(){
+
         val email = editTextEmail.text.toString()
         val password = editTextPassword.text.toString()
 

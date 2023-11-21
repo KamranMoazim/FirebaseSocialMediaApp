@@ -1,5 +1,6 @@
 package com.example.firebasechatapp
 
+//import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -18,6 +19,7 @@ import com.example.firebasechatapp.Adapters.CommentsRecyclerViewAdapter
 import com.example.firebasechatapp.data.Comment
 import com.example.firebasechatapp.data.User
 import com.example.firebasechatapp.repositories.PostRepository
+import com.example.firebasechatapp.repositories.UserRepository
 import com.example.firebasechatapp.utils.MyUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
 import com.google.firebase.Timestamp
@@ -40,6 +42,9 @@ class PostDetailActivity : AppCompatActivity() {
 //    private lateinit var storageReference: StorageReference
 
     private lateinit var postRepository: PostRepository
+    private lateinit var userRepository: UserRepository
+
+    private  lateinit var whosePost:User
 
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
@@ -56,11 +61,17 @@ class PostDetailActivity : AppCompatActivity() {
     private lateinit var detailDescriptionTextView:TextView
     private lateinit var detailViewDeleteBtn:Button
 
+
+    private lateinit var otherUserImageText:TextView
+    private lateinit var otherUserUsername:TextView
+    private lateinit var otherUserFullName:TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_detail)
 
         postRepository = PostRepository(this)
+        userRepository = UserRepository(this)
 
         progressBar = findViewById(R.id.loadingProgressBarLayout)
 
@@ -76,6 +87,10 @@ class PostDetailActivity : AppCompatActivity() {
         detailNameTextView = findViewById(R.id.detail_name_single_car_view)
         detailDescriptionTextView = findViewById(R.id.detail_description_single_car_view)
         detailViewDeleteBtn = findViewById(R.id.deletebtn)
+
+        otherUserImageText = findViewById(R.id.other_user_imageText)
+        otherUserUsername = findViewById(R.id.other_user_username)
+        otherUserFullName = findViewById(R.id.other_user_fullname)
 
         commentInput = findViewById(R.id.actual_comment_box)
         commentBtn = findViewById(R.id.comment_send_btn)
@@ -110,6 +125,10 @@ class PostDetailActivity : AppCompatActivity() {
         commentsRecyclerView.adapter = adapter
 
         loadData(postFromIntent.PostID)
+        loadPostUserDetails(postFromIntent.AuthorId)
+
+
+
 
 
 
@@ -153,6 +172,18 @@ class PostDetailActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    fun loadPostUserDetails(userID:String){
+        userRepository.fetchUserDetailsUsingCollections(userID){
+            user -> run {
+                whosePost = user!!
+
+                otherUserFullName.text = whosePost.FullName
+                otherUserUsername.text = whosePost.UserName
+                otherUserImageText.text = MyUtils.getInitials(whosePost.FullName)
+            }
+        }
     }
 
     private fun loadData(postId:String) {
