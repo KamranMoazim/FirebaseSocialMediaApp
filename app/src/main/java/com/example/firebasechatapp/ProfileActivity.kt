@@ -24,10 +24,17 @@ class ProfileActivity : AppCompatActivity() {
                         .commit()
                     return@setOnNavigationItemSelectedListener true
                 }
-                R.id.navigation_dashboard -> {
+                R.id.navigation_messages -> {
                     // Replace the current fragment with MessagesFragment
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, MessagesFragment())
+                        .commit()
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.navigation_groups -> {
+                    // Replace the current fragment with MessagesFragment
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, GroupsFragment())
                         .commit()
                     return@setOnNavigationItemSelectedListener true
                 }

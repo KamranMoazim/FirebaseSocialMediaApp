@@ -5,24 +5,15 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.firebasechatapp.ChatActivity
 import com.example.firebasechatapp.R
-import com.example.firebasechatapp.ViewHolders.ChatMessageViewHolder
-import com.example.firebasechatapp.ViewHolders.FriendsViewHolder
 import com.example.firebasechatapp.ViewHolders.MyChatsViewHolder
-import com.example.firebasechatapp.data.ChatMessage
 import com.example.firebasechatapp.data.ChatRoom
-import com.example.firebasechatapp.data.Post
 import com.example.firebasechatapp.data.User
 import com.example.firebasechatapp.utils.FirebaseUtils
 import com.example.firebasechatapp.utils.MyUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.firestore.Query
 
 
 class MyChatsRecyclerViewAdapter(private val ctx: Context): RecyclerView.Adapter<MyChatsViewHolder>() {

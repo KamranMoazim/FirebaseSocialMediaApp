@@ -14,8 +14,6 @@ import com.example.firebasechatapp.data.ChatRoom
 import com.example.firebasechatapp.data.User
 import com.example.firebasechatapp.repositories.ChatRoomRepository
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DatabaseReference
 
 
 class MessagesFragment : Fragment() {
@@ -75,14 +73,14 @@ class MessagesFragment : Fragment() {
         adapter = MyChatsRecyclerViewAdapter(this.requireContext())
         recyclerView.adapter = adapter
 
-        loadData("")
+        loadAllChatRoom()
 
     }
 
 
 
 
-    private fun loadData(data: String) {
+    private fun loadAllChatRoom() {
 
         showLoader()
 

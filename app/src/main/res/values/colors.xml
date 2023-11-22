@@ -14,6 +14,6 @@
     <color name="lightgreen">#e5ffcc</color>
     <color name="settingsIconColor">#0E8374</color>
     <color name="grayBackground">#BCBCBC</color>
-    <color name="chat_color_sender">#7090A1</color>
-    <color name="chat_color_receiver">#0b6156</color>
+    <color name="chat_color_sender">#53AA82</color>
+    <color name="chat_color_receiver">#327B83</color>
 </resources>

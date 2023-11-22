@@ -3,7 +3,7 @@ package com.example.firebasechatapp.utils
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import com.example.firebasechatapp.data.ChatRoom
+import com.example.firebasechatapp.data.GroupChatRoom
 import com.example.firebasechatapp.data.Post
 import com.example.firebasechatapp.data.User
 import com.google.firebase.Timestamp
@@ -56,6 +56,7 @@ object MyUtils {
         return user
     }
 
+
     fun passPostAsIntent(intent:Intent, post:Post){
         intent.putExtra("PostID", post.PostID)
         intent.putExtra("AuthorId", post.AuthorId)
@@ -77,6 +78,34 @@ object MyUtils {
 
         // Return the Post object
         return post
+    }
+
+
+
+    fun passGroupChatRoomAsIntent(intent: Intent, groupChatRoom: GroupChatRoom) {
+        intent.putExtra("GroupChatRoomId", groupChatRoom.GroupChatRoomId)
+        intent.putExtra("GroupCreatorId", groupChatRoom.GroupCreatorId)
+        intent.putExtra("GroupName", groupChatRoom.GroupName)
+        intent.putExtra("LastMessageSenderName", groupChatRoom.LastMessageSenderName)
+        intent.putExtra("LastMessageSenderId", groupChatRoom.LastMessageSenderId)
+        intent.putExtra("LastMessage", groupChatRoom.LastMessage)
+        intent.putExtra("LastMessageTimestamp", groupChatRoom.LastMessageTimestamp)
+        intent.putStringArrayListExtra("UserIds", ArrayList(groupChatRoom.UserIds))
+    }
+
+    fun getGroupChatRoomFromIntent(intent: Intent): GroupChatRoom {
+        val groupChatRoom = GroupChatRoom()
+
+        groupChatRoom.GroupChatRoomId = intent.getStringExtra("GroupChatRoomId") ?: ""
+        groupChatRoom.GroupCreatorId = intent.getStringExtra("GroupCreatorId") ?: ""
+        groupChatRoom.GroupName = intent.getStringExtra("GroupName") ?: ""
+        groupChatRoom.LastMessageSenderName = intent.getStringExtra("LastMessageSenderName") ?: ""
+        groupChatRoom.LastMessageSenderId = intent.getStringExtra("LastMessageSenderId") ?: ""
+        groupChatRoom.LastMessage = intent.getStringExtra("LastMessage") ?: ""
+        groupChatRoom.LastMessageTimestamp = intent.getSerializableExtra("LastMessageTimestamp") as? Timestamp
+        groupChatRoom.UserIds = intent.getStringArrayListExtra("UserIds") ?: emptyList()
+
+        return groupChatRoom
     }
 
 

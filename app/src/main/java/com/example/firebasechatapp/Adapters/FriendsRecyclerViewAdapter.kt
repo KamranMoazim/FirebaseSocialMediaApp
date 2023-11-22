@@ -24,11 +24,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 
 
-class FriendsRecyclerViewAdapter(ctx: Context): RecyclerView.Adapter<FriendsViewHolder>() {
+open class FriendsRecyclerViewAdapter(ctx: Context): RecyclerView.Adapter<FriendsViewHolder>() {
 
-    private var sharedPreferencesHelper: SharedPreferencesHelper = SharedPreferencesHelper(ctx)
-    private var savedCredentials:Triple<String?, String?, User?> = sharedPreferencesHelper.getSavedCredentials()
-    private val usersList = ArrayList<User>()
+    var sharedPreferencesHelper: SharedPreferencesHelper = SharedPreferencesHelper(ctx)
+    var savedCredentials:Triple<String?, String?, User?> = sharedPreferencesHelper.getSavedCredentials()
+    val usersList = ArrayList<User>()
 
     fun updateUserLis(users : List<User>){
         this.usersList.clear()
@@ -110,4 +110,5 @@ class FriendsRecyclerViewAdapter(ctx: Context): RecyclerView.Adapter<FriendsView
         }
 
     }
+
 }

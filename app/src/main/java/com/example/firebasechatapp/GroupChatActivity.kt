@@ -1,5 +1,6 @@
 package com.example.firebasechatapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -11,7 +12,9 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.firebasechatapp.Adapters.ChatMessageRecyclerViewAdapter
+import com.example.firebasechatapp.Adapters.GroupChatMessageRecyclerViewAdapter
 import com.example.firebasechatapp.data.ChatRoom
+import com.example.firebasechatapp.data.GroupChatRoom
 import com.example.firebasechatapp.data.User
 import com.example.firebasechatapp.repositories.ChatMessageRepository
 import com.example.firebasechatapp.repositories.ChatRoomRepository
@@ -19,9 +22,7 @@ import com.example.firebasechatapp.repositories.UserRepository
 import com.example.firebasechatapp.utils.MyUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
 
-
-class ChatActivity : AppCompatActivity() {
-
+class GroupChatActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private fun showLoader() {
         progressBar.visibility = View.VISIBLE
@@ -35,26 +36,28 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var chatRoomRepository: ChatRoomRepository
     private lateinit var chatMessageRepository: ChatMessageRepository
 
-    private lateinit var chatroomId:String
-    private lateinit var otherUser:User
-    private var chatRoom:ChatRoom? = null
+    private lateinit var groupChatroomId:String
+    private var groupChatRoom: GroupChatRoom? = null
 
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
     private lateinit var savedCredentials:Triple<String?, String?, User?>
-    private lateinit var adapter:ChatMessageRecyclerViewAdapter
+    private lateinit var adapter: GroupChatMessageRecyclerViewAdapter
 
-    private lateinit var messageInput:EditText
-    private lateinit var sendMessageBtn:ImageButton
-    private lateinit var backBtn:ImageButton
-    private lateinit var chatImageText:TextView
-    private lateinit var chatUserName:TextView
+
+
+    private lateinit var messageInput: EditText
+    private lateinit var sendMessageBtn: ImageButton
+    private lateinit var backBtn: ImageButton
+    private lateinit var detailsBtn: ImageButton
+    private lateinit var groupChatName: TextView
     private lateinit var chatRecyclerView: RecyclerView
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat)
+        setContentView(R.layout.activity_group_chat)
+
 
         progressBar = findViewById(R.id.loadingProgressBarLayout)
 
@@ -62,24 +65,21 @@ class ChatActivity : AppCompatActivity() {
         chatRoomRepository = ChatRoomRepository(this)
         chatMessageRepository = ChatMessageRepository(this)
 
+        groupChatRoom = MyUtils.getGroupChatRoomFromIntent(intent)
 
         sharedPreferencesHelper = SharedPreferencesHelper(this)
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
-
-        otherUser = MyUtils.getUserFromIntent(intent)
 
         messageInput = findViewById(R.id.actual_message_box)
         sendMessageBtn = findViewById(R.id.message_send_btn)
         chatRecyclerView = findViewById(R.id.all_messages_recycler_view)
 
+        detailsBtn = findViewById(R.id.group_details)
         backBtn = findViewById(R.id.go_back)
-        chatImageText = findViewById(R.id.chat_imageText)
-        chatUserName = findViewById(R.id.chat_username)
+        groupChatName = findViewById(R.id.group_name)
 
-        chatroomId = MyUtils.getChatRoomId(savedCredentials.third!!.UserId, otherUser.UserId)
-
-        chatImageText.text = MyUtils.getInitials(otherUser.FullName)
-        chatUserName.text = otherUser.UserName
+        groupChatroomId = groupChatRoom!!.GroupChatRoomId
+        groupChatName.text = groupChatRoom!!.GroupName
 
         backBtn.setOnClickListener { onBackPressed() }
 
@@ -89,33 +89,32 @@ class ChatActivity : AppCompatActivity() {
                 if (message.isEmpty()) {
                     return@run
                 } else {
-                    sendMessageToUser(message)
+                    sendMessageToGroup(message)
                 }
             }
         }
 
-
-
-
-        getOrCreateChatRoom()
         setupChatRecyclerView()
+
+        detailsBtn.setOnClickListener {
+//            GroupDetailsActivity
+            val intent = Intent(this, GroupDetailsActivity::class.java)
+            MyUtils.passGroupChatRoomAsIntent(intent, groupChatRoom!!)
+            startActivity(intent)
+        }
     }
+
 
     private fun setupChatRecyclerView() {
         showLoader()
-//        var query = FirebaseUtils.getChatRoomMessageReference(chatroomId)
-//            .orderBy("messageTimestamp", Query.Direction.DESCENDING)
-//
-//        var options =
-//            FirestoreRecyclerOptions.Builder<ChatMessage>()
-//                .setQuery(query, ChatMessage::class.java).build()
 
         var manager = LinearLayoutManager(this)
         manager.reverseLayout = true
         chatRecyclerView.layoutManager = manager
 
 //        adapter = ChatMessageRecyclerViewAdapter(options, this)
-        adapter = ChatMessageRecyclerViewAdapter(chatMessageRepository.getAllReentChatMessagesQuery(chatroomId), this)
+
+        adapter = GroupChatMessageRecyclerViewAdapter(chatMessageRepository.getAllSentGroupChatMessagesQuery(groupChatroomId), this)
         chatRecyclerView.adapter = adapter
         adapter.startListening()
 
@@ -140,49 +139,24 @@ class ChatActivity : AppCompatActivity() {
         hideLoader()
     }
 
-    private fun sendMessageToUser(message: String) {
 
-//        chatRoom!!.LastMessageTimestamp = Timestamp.now()
-//        chatRoom!!.LastMessageSenderId = savedCredentials.third!!.UserId
-//        chatRoom!!.LastMessage = message
-//        FirebaseUtils.getChatRoomReference(chatroomId).set(chatRoom!!)
-//
-//        var chatMessage = ChatMessage(message, savedCredentials.third!!.UserId, Timestamp.now())
-//        FirebaseUtils.getChatRoomMessageReference(chatroomId).add(chatMessage)
-//            .addOnCompleteListener { task ->
-//                if (task.isSuccessful){
-//                    messageInput.setText("")
-//                }
-//            }
-        chatMessageRepository.sendMessageToUser(chatRoom!!, message, chatroomId){
-            success, message ->
-                run {
-                    if (success){
-                        messageInput.setText("")
-                    } else {
-                        myToast(message)
-                    }
+
+
+
+    private fun sendMessageToGroup(message: String) {
+
+        chatMessageRepository.sendMessageToGroup(groupChatRoom!!, message, groupChatroomId){
+                success, message ->
+            run {
+                if (success){
+                    messageInput.setText("")
+                } else {
+                    myToast(message)
                 }
+            }
         }
     }
 
-
-    fun getOrCreateChatRoom(){
-
-        chatRoomRepository.getOrCreateChatRoom(
-                savedCredentials.third!!.UserId,
-                otherUser.UserId,
-                chatroomId){
-                    success, message, receivedChatRoom ->
-                        run {
-                            myToast(message)
-                            if (success){
-                                chatRoom = receivedChatRoom
-                            }
-                        }
-                }
-
-    }
 
     private fun myToast(msg:String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()

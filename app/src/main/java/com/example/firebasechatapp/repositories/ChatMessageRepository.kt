@@ -3,6 +3,8 @@ package com.example.firebasechatapp.repositories
 import android.content.Context
 import com.example.firebasechatapp.data.ChatMessage
 import com.example.firebasechatapp.data.ChatRoom
+import com.example.firebasechatapp.data.GroupChatMessage
+import com.example.firebasechatapp.data.GroupChatRoom
 import com.example.firebasechatapp.utils.FirebaseUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -47,6 +49,53 @@ class ChatMessageRepository (
         FirebaseUtils.getChatRoomReference(chatroomId).set(chatRoom!!)
 
         var chatMessage = ChatMessage(message, savedCredentials.third!!.UserId, Timestamp.now())
+        FirebaseUtils.getChatRoomMessageReference(chatroomId).add(chatMessage)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+//                    messageInput.setText("")
+                    callback(true, "")
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle errors here
+//                Log.e("UserData", "Error getting users: ${exception.message}")
+                callback(false, "Error Sending Message")
+            }
+    }
+
+
+
+    fun getAllSentGroupChatMessagesQuery (
+        chatroomId:String
+    ): FirestoreRecyclerOptions<GroupChatMessage> {
+
+
+        var query = FirebaseUtils.getChatRoomMessageReference(chatroomId)
+            .orderBy("messageTimestamp", Query.Direction.DESCENDING)
+
+        var options =
+            FirestoreRecyclerOptions.Builder<GroupChatMessage>()
+                .setQuery(query, GroupChatMessage::class.java).build()
+
+        return options
+    }
+
+
+    fun sendMessageToGroup(
+        chatRoom:GroupChatRoom,
+        message: String,
+        chatroomId:String,
+        callback: (Boolean, String) -> Unit
+    ) {
+
+        val savedCredentials = sharedPreferencesHelper.getSavedCredentials()
+
+        chatRoom!!.LastMessageTimestamp = Timestamp.now()
+        chatRoom!!.LastMessageSenderId = savedCredentials.third!!.UserId
+        chatRoom!!.LastMessage = message
+        FirebaseUtils.getChatRoomReference(chatroomId).set(chatRoom!!)
+
+        var chatMessage = GroupChatMessage(message, savedCredentials.third!!.UserName, savedCredentials.third!!.UserId, Timestamp.now())
         FirebaseUtils.getChatRoomMessageReference(chatroomId).add(chatMessage)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful){

@@ -6,9 +6,14 @@
         android:title="Friends" />
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_messages"
         android:icon="@drawable/ic_chat"
         android:title="Messages" />
+
+    <item
+        android:id="@+id/navigation_groups"
+        android:icon="@drawable/ic_groups"
+        android:title="Groups" />
 
     <item
         android:id="@+id/navigation_profile"
