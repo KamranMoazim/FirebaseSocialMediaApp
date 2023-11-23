@@ -55,11 +55,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var carRecyclerView:RecyclerView
 
 
-//    private lateinit var  mainFab: FloatingActionButton
-//    private lateinit var  profileFab: FloatingActionButton
-//    private lateinit var  addFab: FloatingActionButton
-//    private lateinit var  logoutFab: FloatingActionButton
-
     private lateinit var floatingAddBtn: FloatingActionButton
     private lateinit var floatingProfileBtn: FloatingActionButton
     private lateinit var floatingLogoutBtn: FloatingActionButton
@@ -100,9 +95,6 @@ class HomeActivity : AppCompatActivity() {
         floatingProfileBtn =  findViewById(R.id.floating_profile_button)
 
         mainFab = findViewById(R.id.floatingActionButton)
-//        profileFab = findViewById(R.id.floating_profile_button)
-//        addFab = findViewById(R.id.floating_add_button)
-//        logoutFab = findViewById(R.id.floating_logout_button)
 
         floatingProfileBtn.visibility = View.GONE
         floatingAddBtn.visibility = View.GONE
@@ -171,9 +163,6 @@ class HomeActivity : AppCompatActivity() {
                 } else {
                     loadData("")
                 }
-
-                // Do something with the updated text (search functionality, etc.)
-                // Example: performSearch(searchText)
             }
         })
 
@@ -198,7 +187,11 @@ class HomeActivity : AppCompatActivity() {
 
             hideLoader()
 
-            Log.d("adapter.itemCount", adapter.itemCount.toString())
+//            if (adapter.itemCount == 0){
+//                myToast("Your Friends hasn't Posted lately")
+//            }
+
+//            Log.d("adapter.itemCount", adapter.itemCount.toString())
 
 
         } else {

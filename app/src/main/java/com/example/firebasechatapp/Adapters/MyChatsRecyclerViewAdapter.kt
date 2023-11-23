@@ -19,14 +19,9 @@ import com.example.firebasechatapp.utils.SharedPreferencesHelper
 class MyChatsRecyclerViewAdapter(private val ctx: Context): RecyclerView.Adapter<MyChatsViewHolder>() {
 
     private var myChatsList = ArrayList<ChatRoom>()
-    private var sharedPreferencesHelper: SharedPreferencesHelper
-    private var savedCredentials:Triple<String?, String?, User?>
+    private var sharedPreferencesHelper: SharedPreferencesHelper = SharedPreferencesHelper(ctx)
+    private var savedCredentials:Triple<String?, String?, User?> = sharedPreferencesHelper.getSavedCredentials()
 
-
-    init {
-        sharedPreferencesHelper = SharedPreferencesHelper(ctx)
-        savedCredentials = sharedPreferencesHelper.getSavedCredentials()
-    }
 
     fun updateMyChatsLis(myChatsList : List<ChatRoom>){
         this.myChatsList.clear()
@@ -48,7 +43,6 @@ class MyChatsRecyclerViewAdapter(private val ctx: Context): RecyclerView.Adapter
     override fun onBindViewHolder(holder: MyChatsViewHolder, position: Int) {
 
         var currentChatRoom = myChatsList[position]
-//        Log.d("onBindViewHolder", "currentChatRoom: ${currentChatRoom.UserIds}")
 
 
         var toFindUserID:String
@@ -59,12 +53,6 @@ class MyChatsRecyclerViewAdapter(private val ctx: Context): RecyclerView.Adapter
             toFindUserID = currentChatRoom.UserIds[0]
         }
         var otherUser:User? = null
-//        FirebaseUtils.allUsersCollectionReference()
-//            .whereArrayContains("userId", toFindUserID)
-//            .get()
-//            .addOnCompleteListener { task ->
-//
-//            }
 
         FirebaseUtils.allUsersCollectionReference()
             .whereEqualTo("userId", toFindUserID)
@@ -79,21 +67,19 @@ class MyChatsRecyclerViewAdapter(private val ctx: Context): RecyclerView.Adapter
                         otherUser = userDocument.toObject(User::class.java)!!
 
                         // Now you can use the otherUser object here
-                        Log.d("MyActivity", "Other User: $otherUser")
 
                         val lastMessageSendByMe = currentChatRoom.LastMessageSenderId == savedCredentials.third!!.UserId
 
                         if (otherUser != null) {
                             holder.usernameTextView.text = MyUtils.getSubString(otherUser!!.UserName, 8) + "..."
                             if (lastMessageSendByMe) {
-//                                holder.lastMessageTextView.text = "You : " + currentChatRoom.LastMessage.subSequence(0, 25).toString() + "..."
                                 holder.lastMessageTextView.text = MyUtils.getSubString("You : " + currentChatRoom.LastMessage, 25) + "..."
                             } else {
                                 holder.lastMessageTextView.text = currentChatRoom.LastMessage
                             }
                             holder.lastMessageTimeTextView.text = MyUtils.timeStampToString(currentChatRoom.LastMessageTimestamp!!)
-
                             holder.profileTextView.text = MyUtils.getInitials(otherUser!!.FullName)
+
 
                             holder.itemView.setOnClickListener {
                                 val intent = Intent(holder.itemView.context, ChatActivity::class.java)
@@ -113,38 +99,5 @@ class MyChatsRecyclerViewAdapter(private val ctx: Context): RecyclerView.Adapter
                     Log.e("MyActivity", "Error getting user: ${task.exception}")
                 }
             }
-
-
-//        FirebaseUtils.getOtherUserFromChatReference(currentChatRoom.UserIds, savedCredentials.third!!.UserId)
-//            .get()
-//            .addOnCompleteListener { task ->
-//                if (task != null && task.isSuccessful) {
-//                    val lastMessageSendByMe = currentChatRoom.LastMessageSenderId == savedCredentials.third!!.UserId
-//
-//                    val otherUser = task.getResult().toObject(User::class.java)
-//                    Log.d("MyChatsRecyclerViewAdapter", "Other User: $otherUser")
-//
-//                    if (otherUser != null) {
-//                        holder.usernameTextView.text = otherUser.UserName
-//                        if (lastMessageSendByMe) {
-//                            holder.lastMessageTextView.text = "You : " + currentChatRoom.LastMessage
-//                        } else {
-//                            holder.lastMessageTextView.text = currentChatRoom.LastMessage
-//                        }
-//                        holder.lastMessageTimeTextView.text = MyUtils.timeStampToString(currentChatRoom.LastMessageTimestamp!!)
-//
-//                        holder.itemView.setOnClickListener {
-//                            val intent = Intent(holder.itemView.context, ChatActivity::class.java)
-//                            MyUtils.passUserAsIntent(intent, otherUser)
-//                            holder.itemView.context.startActivity(intent)
-//                        }
-//                    } else {
-//                        Log.e("MyChatsRecyclerViewAdapter", "Error: Other user is null")
-//                    }
-//                } else {
-//                    Log.e("MyChatsRecyclerViewAdapter", "Error getting other user: ${task.exception}")
-//                }
-//            }
-
     }
 }

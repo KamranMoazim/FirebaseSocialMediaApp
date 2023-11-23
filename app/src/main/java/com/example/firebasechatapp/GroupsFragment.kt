@@ -54,8 +54,8 @@ class GroupsFragment : Fragment() {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_groups, container, false)
 
-        val fabAddGroup: FloatingActionButton = view.findViewById(R.id.fabAddGroup)
 
+        val fabAddGroup: FloatingActionButton = view.findViewById(R.id.fabAddGroup)
         fabAddGroup.setOnClickListener {
             showGroupNameDialog()
         }
@@ -114,10 +114,6 @@ class GroupsFragment : Fragment() {
 
     private fun showGroupNameDialog() {
         val groupNameDialog = GroupNameDialog(requireContext()) { groupName ->
-            // Handle the entered group name
-            // You can perform any action with the entered group name here
-//            Toast.makeText(requireContext(), "Group Name: $groupName", Toast.LENGTH_SHORT).show()
-//            myToast("Group Name: $groupName")
 
             chatRoomRepository.createGroupChatRoom(savedCredentials.third!!.UserId, groupName){
                 success, message, groupChatRoom ->

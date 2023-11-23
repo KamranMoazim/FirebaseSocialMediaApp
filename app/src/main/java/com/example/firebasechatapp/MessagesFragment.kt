@@ -86,7 +86,7 @@ class MessagesFragment : Fragment() {
 
         chatRooms = mutableListOf()
 
-        chatRoomRepository.getMyChatRooms(){
+        chatRoomRepository.getMyChatRooms(savedCredentials.third!!.UserId){
             success, message, receivedChatRooms ->
             run {
 

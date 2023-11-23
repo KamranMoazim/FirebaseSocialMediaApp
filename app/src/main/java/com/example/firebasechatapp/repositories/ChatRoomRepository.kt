@@ -20,13 +20,15 @@ class ChatRoomRepository(
 
 
     fun getMyChatRooms(
+        userId:String,
         callback: (Boolean, String, List<ChatRoom>) -> Unit
     ){
 
         var chatRooms = mutableListOf<ChatRoom>()
 
         firestoreReference
-            .whereArrayContains("userIds", sharedPreferencesHelper.getSavedCredentials().third!!.UserId)
+//            .whereArrayContains("userIds", sharedPreferencesHelper.getSavedCredentials().third!!.UserId)
+            .whereArrayContains("userIds", userId)
             .whereEqualTo("isGroupChatRoom", false)
             .orderBy("lastMessageTimestamp", Query.Direction.DESCENDING)
             .get()
@@ -40,16 +42,13 @@ class ChatRoomRepository(
                         chatRooms.add(chatRoom!!)
                     }
                     callback(true,  "Received ChatRooms from Server", chatRooms)
-//                    adapter.updateMyChatsLis(chatRooms)
                 } else {
                     // No data found
-//                    Log.d("UserData", "No users found")
                     callback(false,  "No ChatRooms found", chatRooms)
                 }
             }
             .addOnFailureListener { exception ->
                 // Handle errors here
-//                Log.e("UserData", "Error getting users: ${exception.message}")
                 callback(false,  "Error getting users: ${exception.message}", chatRooms)
             }
     }

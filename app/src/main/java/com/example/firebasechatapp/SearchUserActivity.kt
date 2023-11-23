@@ -82,25 +82,12 @@ class SearchUserActivity : AppCompatActivity() {
     private fun loadData(data: String) {
         users = mutableListOf()
 
+        val existingUsers = mutableListOf<User>()
 
-
-        Log.d("myFriendsIds", "myFriendsIds: ${myFriendsIds}")
-
-        if (myFriendsIds.isNotEmpty()) {
-
-            val existingUsers = mutableListOf<User>()
-
-            FirebaseUtils.getTop10UsersByUsername(existingUsers, myFriendsIds) { filteredUsers ->
-                users = filteredUsers.toMutableList()
-                adapter.updateAddNewFriendsList(filteredUsers)
-            }
-
-        } else {
-
+        FirebaseUtils.getTop10UsersByUsername(existingUsers, listOf(savedCredentials.third!!.UserId) + myFriendsIds) { filteredUsers ->
+            users = filteredUsers.toMutableList()
+            adapter.updateAddNewFriendsList(filteredUsers)
         }
-
-
-
 
     }
 

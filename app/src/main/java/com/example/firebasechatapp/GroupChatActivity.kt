@@ -120,7 +120,6 @@ class GroupChatActivity : AppCompatActivity() {
 
         val dataObserver = object : RecyclerView.AdapterDataObserver() {
             override fun onChanged() {
-                // Handle data set changes (e.g., notifyDataSetChanged())
             }
 
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -129,7 +128,6 @@ class GroupChatActivity : AppCompatActivity() {
             }
 
             override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-                // Handle item removals
             }
 
             // Other methods for additional data change events

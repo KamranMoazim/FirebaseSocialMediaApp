@@ -25,7 +25,7 @@ import com.google.firebase.storage.StorageReference
 @Suppress("DEPRECATION")
 class UploadPostActivity : AppCompatActivity() {
 
-//    private lateinit var databaseReference: DatabaseReference
+
     private lateinit var firestoreReference: CollectionReference
     private lateinit var storageReference: StorageReference
     private lateinit var sharedPreferencesHelper: SharedPreferencesHelper
@@ -55,7 +55,6 @@ class UploadPostActivity : AppCompatActivity() {
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
 
 
-//        databaseReference = FirebaseUtils.getPostsReferenceForUser(savedCredentials.third!!.UserId)
         storageReference = FirebaseUtils.getStorageReference().child(AppConsts.POST_Image_CONSTANT)
         firestoreReference = FirebaseUtils.allPostsCollectionReference()
 

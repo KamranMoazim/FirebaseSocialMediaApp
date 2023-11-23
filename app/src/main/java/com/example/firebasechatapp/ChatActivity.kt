@@ -103,12 +103,6 @@ class ChatActivity : AppCompatActivity() {
 
     private fun setupChatRecyclerView() {
         showLoader()
-//        var query = FirebaseUtils.getChatRoomMessageReference(chatroomId)
-//            .orderBy("messageTimestamp", Query.Direction.DESCENDING)
-//
-//        var options =
-//            FirestoreRecyclerOptions.Builder<ChatMessage>()
-//                .setQuery(query, ChatMessage::class.java).build()
 
         var manager = LinearLayoutManager(this)
         manager.reverseLayout = true
@@ -121,7 +115,6 @@ class ChatActivity : AppCompatActivity() {
 
         val dataObserver = object : RecyclerView.AdapterDataObserver() {
             override fun onChanged() {
-                // Handle data set changes (e.g., notifyDataSetChanged())
             }
 
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -130,7 +123,6 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-                // Handle item removals
             }
 
             // Other methods for additional data change events
@@ -142,18 +134,6 @@ class ChatActivity : AppCompatActivity() {
 
     private fun sendMessageToUser(message: String) {
 
-//        chatRoom!!.LastMessageTimestamp = Timestamp.now()
-//        chatRoom!!.LastMessageSenderId = savedCredentials.third!!.UserId
-//        chatRoom!!.LastMessage = message
-//        FirebaseUtils.getChatRoomReference(chatroomId).set(chatRoom!!)
-//
-//        var chatMessage = ChatMessage(message, savedCredentials.third!!.UserId, Timestamp.now())
-//        FirebaseUtils.getChatRoomMessageReference(chatroomId).add(chatMessage)
-//            .addOnCompleteListener { task ->
-//                if (task.isSuccessful){
-//                    messageInput.setText("")
-//                }
-//            }
         chatMessageRepository.sendMessageToUser(chatRoom!!, message, chatroomId){
             success, message ->
                 run {
@@ -167,7 +147,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
-    fun getOrCreateChatRoom(){
+    private fun getOrCreateChatRoom(){
 
         chatRoomRepository.getOrCreateChatRoom(
                 savedCredentials.third!!.UserId,
@@ -175,7 +155,7 @@ class ChatActivity : AppCompatActivity() {
                 chatroomId){
                     success, message, receivedChatRoom ->
                         run {
-                            myToast(message)
+//                            myToast(message)
                             if (success){
                                 chatRoom = receivedChatRoom
                             }

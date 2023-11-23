@@ -1,9 +1,7 @@
 package com.example.firebasechatapp
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -11,17 +9,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.firebasechatapp.Adapters.FriendsRecyclerViewAdapter
 import com.example.firebasechatapp.Adapters.GroupFriendsRecyclerViewAdapter
 import com.example.firebasechatapp.data.GroupChatRoom
 import com.example.firebasechatapp.data.User
 import com.example.firebasechatapp.repositories.UserRepository
 import com.example.firebasechatapp.utils.MyUtils
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.firestore.CollectionReference
 
-class GroupDetailsActivity : AppCompatActivity() {
+class ViewGroupMembersActivity : AppCompatActivity() {
+
+
 
     private lateinit var progressBar: ProgressBar
     private fun showLoader() {
@@ -52,7 +49,7 @@ class GroupDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group_details)
+        setContentView(R.layout.activity_view_group_members)
 
         groupChatRoom = MyUtils.getGroupChatRoomFromIntent(intent)
         progressBar = findViewById(R.id.loadingProgressBarLayout)
@@ -71,39 +68,16 @@ class GroupDetailsActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(false)
 
 
-        adapter = GroupFriendsRecyclerViewAdapter(this, groupChatRoom!!)
+        adapter = GroupFriendsRecyclerViewAdapter(this, groupChatRoom!!, false)
         recyclerView.adapter = adapter
 
 
         groupName.text = groupChatRoom!!.GroupName
 
         var searchBtn = findViewById<ImageView>(R.id.search_friend_btn)
-        searchBtn.setOnClickListener{
-//            var intent = Intent(this, SearchUserActivity::class.java)
-//            startActivity(intent)
-            if (groupChatRoom!!.GroupCreatorId == savedCredentials.third!!.UserId){
-
-//                extractedCommonFunction()
-                var intent = Intent(this, ViewGroupMembersActivity::class.java)
-                MyUtils.passGroupChatRoomAsIntent(intent, groupChatRoom!!)
-                startActivity(intent)
-//                finish()
-            } else {
-                myToast("You cannot view Group Members")
-            }
-        }
+        searchBtn.visibility = View.GONE
 
 
-        loadData()
-    }
-
-//    override fun onResume() {
-//        super.onResume()
-//        loadData()
-//    }
-
-    override fun onRestart() {
-        super.onRestart()
         loadData()
     }
 
@@ -113,50 +87,40 @@ class GroupDetailsActivity : AppCompatActivity() {
         showLoader()
         users = mutableListOf()
 
-        if (groupChatRoom!!.GroupCreatorId == savedCredentials.third!!.UserId){
+        val myFriendsIds = savedCredentials.third!!.MyFriendsIds
 
-            val myFriendsIds = savedCredentials.third!!.MyFriendsIds
+        if (myFriendsIds.isNotEmpty()) {
 
-            if (myFriendsIds.isNotEmpty()) {
-
-                extractedCommonFunction()
-
-            } else {
-                // you have no friends
-                myToast("You have no friends")
-                hideLoader()
+            userRepository.fetchMyFriends() { success, message, userList ->
+                run {
+                    //                        myToast(message)
+                    if (success) {
+                        users = removeUsersInGroup(userList, groupChatRoom!!.UserIds)
+                        adapter.updateUserLis(users)
+                    }
+                    if (users.isEmpty()) {
+                        myToast("Your have no Friends in this group")
+                    }
+                    hideLoader()
+                }
             }
 
         } else {
-            myToast("You cannot add Persons to this Group")
+            // you have no friends
+            myToast("You have ")
             hideLoader()
         }
 
 
     }
 
-    private fun extractedCommonFunction() {
-        userRepository.fetchMyFriends() { success, message, userList ->
-            run {
-    //                        myToast(message)
-                if (success) {
-                    users = removeUsersInGroup(userList, groupChatRoom!!.UserIds)
-                    if (users.isEmpty()) {
-                        myToast("Your all Friends are already in the group")
-                    }
-                    adapter.updateUserLis(users)
 
-                }
-                hideLoader()
-            }
-        }
-    }
 
 
     fun removeUsersInGroup(users: List<User>, UserIds: List<String>): List<User> {
         // Filter out users whose UserId is in the UserIds list of the GroupChatRoom
         return users.filter { user ->
-            user.UserId !in UserIds
+            user.UserId in UserIds
         }
     }
 
@@ -164,4 +128,5 @@ class GroupDetailsActivity : AppCompatActivity() {
     private fun myToast(msg:String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
+
 }

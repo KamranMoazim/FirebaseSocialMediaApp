@@ -138,7 +138,8 @@ class PostDetailActivity : AppCompatActivity() {
                 success, message ->
                 run {
                     if (success) {
-                        goToProfileActivity()
+//                        goToProfileActivity()
+                        finish()
                     } else {
                         myToast(message)
                     }
@@ -217,6 +218,7 @@ class PostDetailActivity : AppCompatActivity() {
         myToast("Deleted Data Successfully")
         val intent = Intent(applicationContext, ProfileActivity::class.java)
         startActivity(intent)
+        finishActivity(1)
     }
 
 

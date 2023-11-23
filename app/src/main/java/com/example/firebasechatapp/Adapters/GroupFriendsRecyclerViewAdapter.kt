@@ -14,7 +14,7 @@ import com.example.firebasechatapp.data.GroupChatRoom
 import com.example.firebasechatapp.repositories.ChatRoomRepository
 import com.example.firebasechatapp.utils.SharedPreferencesHelper
 
-class GroupFriendsRecyclerViewAdapter(val ctx: Context, val currentChatGroup:GroupChatRoom) : FriendsRecyclerViewAdapter(ctx) {
+class GroupFriendsRecyclerViewAdapter(val ctx: Context, val currentChatGroup:GroupChatRoom, var isAdd:Boolean = true) : FriendsRecyclerViewAdapter(ctx) {
 
 
     private var chatRoomRepository: ChatRoomRepository = ChatRoomRepository(ctx)
@@ -28,22 +28,44 @@ class GroupFriendsRecyclerViewAdapter(val ctx: Context, val currentChatGroup:Gro
 
 
         var cure = holder.itemView.findViewById<ImageButton>(R.id.remove_friend_btn)
-        cure.setImageResource(R.drawable.ic_add)
+
+
+
+
 
         if (currentChatGroup.GroupCreatorId == savedCredentials.third!!.UserId){
             cure.visibility = View.VISIBLE
+
+            if (isAdd){
+                cure.setImageResource(R.drawable.ic_add)
+            } else {
+                cure.setImageResource(R.drawable.ic_remove_circle)
+            }
+
         } else {
             cure.visibility = View.GONE
         }
 
-
-        cure.setOnClickListener {
-            chatRoomRepository.addPersonToGroupChat(currentChatGroup.GroupChatRoomId, currentUser.UserId){  // means we are adding person to OurChatGroup
-                    success, message ->
-                run {
-                    myToast(message)
-                    usersList.removeAt(position)
-                    notifyDataSetChanged()
+        if (isAdd){
+            cure.setOnClickListener {
+                chatRoomRepository.addPersonToGroupChat(currentChatGroup.GroupChatRoomId, currentUser.UserId){  // means we are adding person to OurChatGroup
+                        success, message ->
+                    run {
+                        myToast(message)
+                        usersList.removeAt(position)
+                        notifyDataSetChanged()
+                    }
+                }
+            }
+        } else {
+            cure.setOnClickListener {
+                chatRoomRepository.removePersonFromGroupChat(currentChatGroup.GroupChatRoomId, currentUser.UserId){  // means we are adding person to OurChatGroup
+                        success, message ->
+                    run {
+                        myToast(message)
+                        usersList.removeAt(position)
+                        notifyDataSetChanged()
+                    }
                 }
             }
         }

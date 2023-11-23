@@ -51,8 +51,7 @@ class FriendsFragment : Fragment() {
 
     private lateinit var userRepository: UserRepository
 
-//    private lateinit var options:FirebaseRecyclerOptions<User>
-//    private lateinit var adapter: FirebaseRecyclerAdapter<User, FriendsViewHolder>
+
     private lateinit var adapter: FriendsRecyclerViewAdapter
     private lateinit var users : List<User>
 
@@ -62,11 +61,8 @@ class FriendsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_friends, container, false)
-
         progressBar = view.findViewById(R.id.loadingProgressBarLayout)
-
         userRepository = UserRepository(requireContext())
-
         return view
     }
 
@@ -77,8 +73,6 @@ class FriendsFragment : Fragment() {
         myFriendsRecyclerView = view.findViewById(R.id.my_friends_recycler_view)
         sharedPreferencesHelper = SharedPreferencesHelper(requireContext())
         savedCredentials = sharedPreferencesHelper.getSavedCredentials()
-//        databaseReference = FirebaseUtils.getDatabaseReference().child("Users")
-//        firestoreReference = FirebaseUtils.allUsersCollectionReference()
 
 
         myFriendsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -96,12 +90,12 @@ class FriendsFragment : Fragment() {
         }
 
 
-        loadData("")
+        loadData()
     }
 
 
 
-    private fun loadData(data: String) {
+    private fun loadData() {
         showLoader()
         users = mutableListOf()
 
